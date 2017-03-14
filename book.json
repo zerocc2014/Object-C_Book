@@ -28,13 +28,10 @@
       "ace":{
              "languages": [
                 {
-                    "lang": "js",
-                    "name": "JavaScript",
-                    "default": true
-                },
-                {
-                    "lang": "oc",
-                    "name": "Object-C"
+                    "edit":"true",
+                    "lang": "mode-objectivec.js",
+                    "check":"true",
+                    "theme":"theme-xcode.js"
                 }
             ]
       
