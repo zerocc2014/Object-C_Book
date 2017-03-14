@@ -26,7 +26,17 @@
             "fontColor": "00FF00"
           },
       "ace":{
-            "lang": "Object-C",
+             "languages": [
+                {
+                    "lang": "js",
+                    "name": "JavaScript",
+                    "default": true
+                },
+                {
+                    "lang": "go",
+                    "name": "Go"
+                }
+            ]"lang": "Object-C",
       
       }
           
