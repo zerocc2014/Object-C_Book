@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["prism","-highlight","video","ga","codeblock-filename","emphasize","baidu"],
+  "plugins": ["prism","-highlight","video","ga","codeblock-filename","emphasize","baidu","link-fixer"],
   "pluginsConfig": {  
     "prism": {
       "css": [
@@ -21,6 +21,10 @@
       
      "baidu": {
        "token": "YOUR TOKEN"
+      },
+      
+     "link-fixer": {
+        "link": "https://www.baseurl.com/"
       }
   
  }
