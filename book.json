@@ -3,6 +3,9 @@
   "plugins": ["prism", "-highlight"],
   "pluginsConfig": {
   "prism": {
+    "css": [
+       "syntax-highlighting/assets/css/prism/prism-base16-ocean.dark.css"
+       ],
     "lang": {
       "flow": "typescript"
     }
