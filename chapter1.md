@@ -15,8 +15,40 @@ take a look at this video:
 ```
 "video-player"
 {% videoplayerscripts %}{% endvideoplayerscripts %}
-{% videoplayer id="myvideo" width="640" height="480" posterExt="png" %}https://s3.amazonaws.com/gitbooks/myvideo{% endvideoplayer %}
+{% videoplayer id="myvideo" width="640" height="480" posterExt="png" %}https://s3.amazonaws.com/gitbooks/myvi
 ```
 
+文字加底色
 
+```
+deo{% endvideoplayer %}
+```
+
+```
+This text is {% em %}highlighted !{% endem %}
+
+This text is {% em %}highlighted with **markdown**!{% endem %}
+
+This text is {% em type="green" %}highlighted in green!{% endem %}
+
+This text is {% em type="red" %}highlighted in red!{% endem %}
+
+This text is {% em color="#ff0000" %}highlighted with a custom color!{% endem %}
+```
+
+语法高亮
+
+```
+{%ace edit=true, lang='c_cpp'%}
+// This is a hello world program for C.
+#include <stdio.h>
+
+int main(){
+  printf("Hello World!");
+  return 1;
+}
+{%endace%}
+```
+
+[https://plugins.gitbook.com/plugin/ace](https://plugins.gitbook.com/plugin/ace)
 

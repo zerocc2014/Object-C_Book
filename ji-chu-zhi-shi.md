@@ -29,15 +29,5 @@ www[https://zerocc.gitbooks.io/oc/content/](https://zerocc.gitbooks.io/oc/conten
 
 # 2222
 
-uri \([https://plugins.gitbook.com/plugin/redirect](https://plugins.gitbook.com/plugin/redirect)\)
-
-> \[source code\]\([https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/%29\)
-
-[https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/\)\#fontColor=00FF00&type=frame
-
-[https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/\)\#fontColor=00FF00&type=frame
-
-[https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/\)\#fontColor=00FF00&type=frame
-
 
 
