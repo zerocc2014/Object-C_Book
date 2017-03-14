@@ -21,29 +21,25 @@
 
 @property (nonatomic, strong) NSArray *LabelArry;
 
-@property (nonatomic, assign) float labelViewheight;
-
-/**
- *  标签文本赋值
- *
- *  @param array 传入的数组（标签string）
- */
-- (void)setClientLabelWithArray:(NSArray *)array setHight:(UIView *)view;
-
-- (CGFloat)clientLabelView:(GXClientLabelView *)clientLabelView viewHeightWithArray:(NSArray *)array;
-
-@en
+@property (nonaomic, assign) float labelViewheight;
 ```
 
+
+
 ```
-#pragma mark - View Lifecycle
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    [self initUI];
+{%ace edit=true, lang='c_cpp'%}
+// This is a hello world program for C.
+#include <stdio.h>
+
+int main(){
+  printf("Hello World!");
+  return 1;
 }
-
+{%endace%}
+ 
 ```
+
+
 
 
 
