@@ -1,9 +1,7 @@
 
 {
-  "plugins": ["theme-api","prism","-highlight","video","ga","codeblock-filename","emphasize","baidu"],
-  "pluginsConfig": { 
-  
-      
+  "plugins": ["prism","-highlight","video","ga","codeblock-filename","emphasize","baidu"],
+  "pluginsConfig": {  
     "prism": {
       "css": [
         "prismjs/themes/prism-okaidia.css"
