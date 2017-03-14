@@ -33,5 +33,5 @@ uri \([https://plugins.gitbook.com/plugin/redirect](https://plugins.gitbook.com/
 
 > \[source code\]\([https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/%29\)
 
-\[source code\][https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/\)\#fontColor=00FF00&type=frame
+[https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/\)\#fontColor=00FF00&type=frame
 
