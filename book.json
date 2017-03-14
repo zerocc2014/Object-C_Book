@@ -1,13 +1,12 @@
 
 {
-  "plugins": ["prism","github-buttons"],
+  "plugins": ["prism","-highlight","github-buttons"],
   "pluginsConfig": {
   
   "github-buttons": {
       "repo": "azu/JavaScript-Plugin-Architecture",
       "types": [
-        "star",
-        "watch"
+        "star"
       ],
       "size": "small"
     },
