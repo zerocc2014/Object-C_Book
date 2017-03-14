@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["theme-api","prism","-highlight","video","ga"],
+  "plugins": ["theme-api","prism","-highlight","video","ga","codeblock-filename","baidu"],
   "pluginsConfig": {  
   "theme-api": {
             "languages": [
@@ -30,6 +30,9 @@
                 "cookieDomain": "mynew.domain.com"
             }
         }
+        "baidu": {
+        "token": "YOUR TOKEN"
+    }
   
  }
 }
