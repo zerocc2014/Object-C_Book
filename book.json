@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["prism","-highlight","video"],
+  "plugins": ["prism","-highlight"],
   "pluginsConfig": {  
   "prism": {
     "css": [
