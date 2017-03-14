@@ -15,31 +15,21 @@
 ```
 
 ```
-#import <UIKit/UIKit.h>
-
-@interface GXClientLabelView : UIView
-
-@property (nonatomic, strong) NSArray *LabelArry;
-
-@property (nonaomic, assign) float labelViewheight;
-```
-
-
-
-```
 {%ace edit=true, lang='c_cpp'%}
 // This is a hello world program for C.
 #include <stdio.h>
-
-int main(){
-  printf("Hello World!");
-  return 1;
-}
-{%endace%}
- 
 ```
 
+```
+{%ace edit=true, lang='objectivec'%}
+#pragma mark - View Lifecycle
+- (void)viewDidLoad {
+    [super viewDidLoad];
 
+    [self initUI];
+}
+{%endace%}
+```
 
 
 
