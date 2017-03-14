@@ -7,7 +7,7 @@
   * 数据结构与算法
 * [iOS 开发](ios-kai-fa.md)
   * [OC 基础](ios-kai-fa/oc-ji-chu.md)
-    * 细节杂记
+    * [细节杂记](ios-kai-fa/oc-ji-chu/xi-jie-za-ji.md)
     * 代理与通知
     * Block 详解
     * KVC 与 KVO 剖析

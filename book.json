@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["theme-api","prism","-highlight","video","ga","video-player"],
+  "plugins": ["theme-api","prism","-highlight","video","ga"],
   "pluginsConfig": {  
   "theme-api": {
             "languages": [
