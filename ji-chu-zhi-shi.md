@@ -17,9 +17,7 @@ www[https://zerocc.gitbooks.io/oc/content/](https://zerocc.gitbooks.io/oc/conten
 @property (nonatomic, strong) UIButton *codeBtn;
 
 @end
-
 ```
-[](https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#8-代码块 "代码块")
 
-
+[http://blog.csdn.net/fishmai/article/details/51905898](http://blog.csdn.net/fishmai/article/details/51905898 "动态语言")
 
