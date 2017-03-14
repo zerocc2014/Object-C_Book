@@ -2,7 +2,7 @@
 
 * [Introduction](README.md)
 * [First Chapter](chapter1.md)
-* 基础知识
+* [基础知识](ji-chu-zhi-shi.md)
   * 计算机网络
   * 数据结构与算法
 * [iOS 开发](ios-kai-fa.md)
