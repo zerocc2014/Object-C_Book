@@ -1,7 +1,20 @@
 
 {
-  "plugins": ["prism","-highlight","video","ga"],
+  "plugins": ["theme-api","prism","-highlight","video","ga","video-player"],
   "pluginsConfig": {  
+  "theme-api": {
+            "languages": [
+                {
+                    "lang": "js",
+                    "name": "JavaScript",
+                    "default": true
+                },
+                {
+                    "lang": "go",
+                    "name": "Go"
+                }
+            ]
+        },
   "prism": {
     "css": [
        "prismjs/themes/prism-okaidia.css"
