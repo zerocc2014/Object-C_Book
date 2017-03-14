@@ -1,8 +1,9 @@
 
 {
   "plugins": ["theme-api","prism","-highlight","video","ga","codeblock-filename","baidu"],
-  "pluginsConfig": {  
-  "theme-api": {
+  "pluginsConfig": { 
+    "theme-api": {
+
             "languages": [
                 {
                     "lang": "js",
