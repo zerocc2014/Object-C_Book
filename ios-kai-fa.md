@@ -28,7 +28,7 @@
 
     [self initUI];
 }
-{%endace%}
+{%end ace%}
 ```
 
 
