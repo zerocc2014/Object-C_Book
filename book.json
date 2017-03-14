@@ -1,6 +1,5 @@
 
 {
-
   "plugins": ["prism", "-highlight","github-buttons"],
   "pluginsConfig": {
   
@@ -16,10 +15,7 @@
   "prism": {
     "css": [
        "prismjs/themes/prism-okaidia.css"
-       ],
-    "lang": {
-      "flow": "typescript"
-    }
+       ]
   }
 }
 
