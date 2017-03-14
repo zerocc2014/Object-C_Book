@@ -1,6 +1,6 @@
 
 {
-  //插件列表，可以包含“-name”用于删除默认插件
+
   "plugins": ["prism", "-highlight","github-buttons"],
   "pluginsConfig": {
   
