@@ -4,7 +4,7 @@
   "pluginsConfig": {
   "prism": {
     "css": [
-       "syntax-highlighting/assets/css/prism/prism-base16-ocean.dark.css"
+       "prismjs/themes/prism-okaidia.css"
        ],
     "lang": {
       "flow": "typescript"
