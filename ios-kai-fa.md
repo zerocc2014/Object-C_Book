@@ -32,7 +32,16 @@
 
 - (CGFloat)clientLabelView:(GXClientLabelView *)clientLabelView viewHeightWithArray:(NSArray *)array;
 
-@end
+@en
+```
+
+```
+#pragma mark - View Lifecycle
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [self initUI];
+}
 
 ```
 
