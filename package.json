@@ -1,4 +1,5 @@
-
 {
-  
+  "dependencies": {
+    "gitbook-plugin-jsfiddle": "^1.0.0"
+  }
 }
