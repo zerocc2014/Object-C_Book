@@ -1,20 +1,14 @@
 
 {
-  "plugins": ["prism","-highlight","github-buttons"],
-  "pluginsConfig": {
-  
-  "github-buttons": {
-      "repo": "prismjs/themes/prism-tomorrow.css",
-      "types": [
-        "star"
-      ],
-      "size": "small"
-    },
-    
+  "plugins": ["prism","-highlight"],
+  "pluginsConfig": {  
   "prism": {
     "css": [
        "prismjs/themes/prism-okaidia.css"
-       ]
+       ],
+   "lang": {
+     "flow": "typescript"
+    }
   }
 }
 
