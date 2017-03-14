@@ -1,7 +1,17 @@
 
 {
-  "plugins": ["prism", "-highlight"],
+  "plugins": ["prism", "-highlight","github-buttons"],
   "pluginsConfig": {
+  
+  "github-buttons": {
+      "repo": "azu/JavaScript-Plugin-Architecture",
+      "types": [
+        "star",
+        "watch"
+      ],
+      "size": "large"
+    }
+    
   "prism": {
     "css": [
        "prismjs/themes/prism-okaidia.css"
