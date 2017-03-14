@@ -4,7 +4,7 @@
   "pluginsConfig": {
   
   "github-buttons": {
-      "repo": "azu/JavaScript-Plugin-Architecture",
+      "repo": "syntax-highlighting/assets/css/prism/prism-xonokai.css",
       "types": [
         "star"
       ],
