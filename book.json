@@ -30,9 +30,6 @@
                 "cookieDomain": "mynew.domain.com"
             }
         }
-        "baidu": {
-        "token": "YOUR TOKEN"
-    }
   
  }
 }
