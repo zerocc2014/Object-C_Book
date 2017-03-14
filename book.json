@@ -9,7 +9,9 @@
         "star",
         "watch"
       ],
-      "size": "small"
+      "size": "small",
+      "width": 30,
+      "height": 18
     },
     
   "prism": {
