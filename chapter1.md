@@ -50,5 +50,16 @@ int main(){
 {%endace%}
 ```
 
+"ace":{
+"languages": [
+{
+"edit":"true",
+"lang": "mode-objectivec.js",
+"check":"true",
+"theme":"theme-xcode.js"
+}
+]
+}
+
 [https://plugins.gitbook.com/plugin/ace](https://plugins.gitbook.com/plugin/ace)
 

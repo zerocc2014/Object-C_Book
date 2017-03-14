@@ -24,19 +24,8 @@
             "height": "500",
             "width": "500",
             "fontColor": "00FF00"
-          },
-      "ace":{
-             "languages": [
-                {
-                    "edit":"true",
-                    "lang": "mode-objectivec.js",
-                    "check":"true",
-                    "theme":"theme-xcode.js"
-                }
-            ]
-      
-      }
-          
+          }
+           
           
   
  }
