@@ -9,11 +9,7 @@
    "lang": {
      "flow": "typescript"
     }
-    
-     "ga": {
-       "token": "UA-XXXX-Y"
-     }
-}
+  }
 
 
 }
