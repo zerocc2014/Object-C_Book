@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["prism","-highlight","video","ga","codeblock-filename","emphasize","baidu","link-fixer","anchors"],
+  "plugins": ["prism","-highlight","video","ga","codeblock-filename","emphasize","baidu","link-fixer","anchors","redirect"],
   "pluginsConfig": {  
     "prism": {
       "css": [
