@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["prism","-highlight"],
+  "plugins": ["prism","-highlight","video","ga"],
   "pluginsConfig": {  
   "prism": {
     "css": [
@@ -9,6 +9,15 @@
    "lang": {
      "flow": "typescript"
     }
+    
+     "ga": {
+       "token": "UA-XXXX-Y",
+       "configuration": {
+                "cookieName": "new_cookie_name",
+                "cookieDomain": "mynew.domain.com"
+            }
+    }
+    
   }
 }
 
