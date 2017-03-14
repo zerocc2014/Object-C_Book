@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["prism", "-highlight","github-buttons"],
+  "plugins": ["prism","github-buttons"],
   "pluginsConfig": {
   
   "github-buttons": {
