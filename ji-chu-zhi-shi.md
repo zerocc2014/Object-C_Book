@@ -31,7 +31,9 @@ www[https://zerocc.gitbooks.io/oc/content/](https://zerocc.gitbooks.io/oc/conten
 
 uri \([https://plugins.gitbook.com/plugin/redirect](https://plugins.gitbook.com/plugin/redirect)\)
 
-> \[source code\]\(https://jsfiddle.net/4o4z6fqn/9/\)
+> \[source code\]\([https://jsfiddle.net/4o4z6fqn/9/\](https://jsfiddle.net/4o4z6fqn/9/\)\)
+
+\[source code\]\(https://jsfiddle.net/4o4z6fqn/9/\)
 
 
 
