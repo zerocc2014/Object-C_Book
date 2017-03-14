@@ -11,10 +11,10 @@
     * 代理与通知
     * Block 详解
     * KVC 与 KVO 剖析
-  * Main函数的故事
+  * [Main 函数的故事](ios-kai-fa/mainhan-shu-de-gu-shi.md)
   * Runloop
   * Runtime 运行时
-  * UI响应者链
+  * [UI 响应者链](ios-kai-fa/uixiang-ying-zhe-lian.md)
   * OC 内存管理
   * OC 多线程
   * OC 音视频
