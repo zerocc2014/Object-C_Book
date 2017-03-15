@@ -74,13 +74,9 @@ OC 没有像 Java，C++ 中的那种绝对的私有及保护成员方法，仅�
 
 关于 Category 和 Extension 的一些区别，在[这里](https://hit-alibaba.github.io/interview/iOS/ObjC-Basic/Class.html#extension)。
 
+## 类变量 {#类变量}
 
-
-
-
-
-
-
+Objective-C 中使用`@property`来实现成员变量，在绑定属性时，如果我们直接把属性暴露出去，虽然写起来很简单，但是没办法检查参数，导致可以随便改，而`@property `可以通过一个`set`方法来设置参数，再通过一个`get`来获取成绩，这样在`set`方法里，就可以检查参数：
 
 
 

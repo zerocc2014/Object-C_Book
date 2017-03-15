@@ -13,7 +13,7 @@
     * KVC 与 KVO 剖析
   * [Main 函数的故事](ios-kai-fa/mainhan-shu-de-gu-shi.md)
   * Runloop
-  * Runtime 运行时
+  * [Runtime 运行时](ios-kai-fa/runtime-yun-xing-shi.md)
   * [UI 响应者链](ios-kai-fa/uixiang-ying-zhe-lian.md)
   * OC 内存管理
   * OC 多线程
@@ -21,4 +21,5 @@
   * OC 网络层
   * 动画
 * 热更新技术
+* [bug 集中营](bug-ji-zhong-ying.md)
 
