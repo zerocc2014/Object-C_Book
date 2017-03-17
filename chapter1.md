@@ -1,5 +1,7 @@
 # First Chapter
 
+[https://github.com/ChenYilong](https://github.com/ChenYilong)
+
 video 插件
 
 ```
@@ -50,15 +52,15 @@ int main(){
 {%endace%}
 ```
 
-"ace":{
-"languages": [
-{
-"edit":"true",
-"lang": "mode-objectivec.js",
-"check":"true",
-"theme":"theme-xcode.js"
-}
-]
+"ace":{  
+"languages": \[  
+{  
+"edit":"true",  
+"lang": "mode-objectivec.js",  
+"check":"true",  
+"theme":"theme-xcode.js"  
+}  
+\]  
 }
 
 [https://plugins.gitbook.com/plugin/ace](https://plugins.gitbook.com/plugin/ace)
