@@ -5,6 +5,7 @@
 * [基础知识](ji-chu-zhi-shi.md)
   * 计算机网络
   * 数据结构与算法
+  * [设计模式](ji-chu-zhi-shi/she-ji-mo-shi.md)
 * [iOS 开发](ios-kai-fa.md)
   * [OC 基础](ios-kai-fa/oc-ji-chu.md)
     * [细节杂记](ios-kai-fa/oc-ji-chu/xi-jie-za-ji.md)
@@ -20,8 +21,8 @@
   * OC 音视频
   * OC 网络层
   * 动画
+* [iOS 系统运行机制及内核](ios-xi-tong-yun-xing-ji-zhi-ji-nei-he.md)
+* [热更新技术](re-geng-xin-ji-zhu.md)
 * [数据加密](shu-ju-jia-mi.md)
-* 热更新技术
 * [bug 集中营](bug-ji-zhong-ying.md)
-* [tempURL](tempurl.md)
 

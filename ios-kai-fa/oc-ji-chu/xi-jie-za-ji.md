@@ -106,7 +106,5 @@ Objective-C 中使用`@property`来实现成员变量，在绑定属性时，如
 
 
 
-
-
-
+基础知识大全：[http://lib.csdn.net/qq\_31810357/286174/chart/%E3%80%90Objective-C%E3%80%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%A4%A7%E5%85%A8](http://lib.csdn.net/qq_31810357/286174/chart/%E3%80%90Objective-C%E3%80%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%A4%A7%E5%85%A8)
 
