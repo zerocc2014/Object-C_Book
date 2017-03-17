@@ -20,7 +20,7 @@
 
 ##### 核心操作系统层（Core OS Layer）：
 
-        Core OS是用 FreeBSD 和Mach 所改写的 Darwin，是开源且符合 POSIX 标准的一个 Unix 核心。这层提供了整个 iOS 系统的一些基础功能，如：硬件驱动, 内存管理，程序管理，线程管理（POSIX），文件系统，网络（BSD Socket）,以及标准输入输出等等，所有这些功能都会通过 \[C语言\]\([http://lib.csdn.net/base/c\](http://lib.csdn.net/base/c\)\) 的API来提供。
+       Core OS是用 FreeBSD 和Mach 所改写的 Darwin，是开源且符合 POSIX 标准的一个 Unix 核心。这层提供了整个 iOS 系统的一些基础功能，如：硬件驱动, 内存管理，程序管理，线程管理（POSIX），文件系统，网络（BSD Socket）,以及标准输入输出等等，所有这些功能都会通过 C语言 的API来提供。
 
 核心OS层的驱动也提供了硬件和系统框架之间的接口。然而，由于安全的考虑，只有有限的系统框架类能访问内核和驱动。
 
@@ -42,7 +42,7 @@
 
 ##### 核心服务层（Core Services layer）：
 
-      Core Services在Core OS 基础上提供了更为丰富的功能， 它包含了 Foundation.Framework 和 Core Foundation.Framework，Foundation 是属于 Objective-C 的 API，如： NSArray 、NS... ，Core Fundation 是属于 C 的 API，如：CFArrayref、CFRunloop、CF... 等。
+Core Services在Core OS 基础上提供了更为丰富的功能， 它包含了 Foundation.Framework 和 Core Foundation.Framework，Foundation 是属于 Objective-C 的 API，如： NSArray 、NS... ，Core Fundation 是属于 C 的 API，如：CFArrayref、CFRunloop、CF... 等。
 
 ###### Core Services Frameworks（核心服务框架）包含框架：
 
