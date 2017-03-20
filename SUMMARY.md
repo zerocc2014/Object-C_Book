@@ -12,6 +12,7 @@
     * 代理与通知
     * Block 详解
     * KVC 与 KVO 剖析
+    * [OC 中内存分配](ios-kai-fa/oc-ji-chu/oc-zhong-nei-cun-fen-pei.md)
   * [Main 函数的故事](ios-kai-fa/mainhan-shu-de-gu-shi.md)
   * Runloop
   * [Runtime 运行时](ios-kai-fa/runtime-yun-xing-shi.md)

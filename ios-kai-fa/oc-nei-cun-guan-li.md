@@ -18,6 +18,70 @@ __weak Viewcontroller *weakSelf = self;
 
 在控制器VC中自定义的控件View的使用中传入了当前VC或self，造成循环引用，这种情况下pop返回时，当前页面也不会被释放，dealloc也不会走。只有在离开页面前，把该控件View先置为空nil。则可以。
 
+## NSTimer中的循环引用
+
+当控制器ViewController跳转进入控制器OneViewController中的时候开启定时器，让定时器每隔一段时间打印一次，当OneViewController dismiss的时候，控制器并没有被销毁。然而定时器的timer invalidate在dealloc中已经写了。
+
+原因在图下：循环引用
+
+![](/assets/NSTimer-retain-syscle.png)
+
+控制器ViewController跳转进入OneViewController中开启定时器
+
+```
+#import "OneViewController.h"
+
+@interface OneViewController ()
+
+
+@property (nonatomic, strong) NSTimer *timer;
+
+@end
+
+
+@implementation OneViewController
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(void)viewDidLoad{
+
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor orangeColor];
+
+    /**
+     1.__weak typeof(self) weakSelf = self; 不能解决
+
+     */
+
+    //开启定时器 
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(testTimerDeallo) userInfo:nil repeats:YES];
+}
+
+/** 方法一直执行 */
+-(void)testTimerDeallo{
+
+    NSLog(@"-----");
+}
+```
+
+当开启定时器以后，testTimerDeallo方法一直执行，即使忽略此控制器以后，也是一直在打印，而且dealloc方法不执行。循环引用造成了内存泄露，控制器不会被释放。
+
+```
+/** 开启定时器以后控制器不能被销毁,此方法不会被调用 */
+-(void)dealloc{
+
+    NSLog(@"xiaohui");
+    [self.timer invalidate];
+}
+
+@end
+```
+
+
+
 ## **僵尸对象：内存已经被回收的对象。**
 
 野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。  
