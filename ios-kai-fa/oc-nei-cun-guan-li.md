@@ -70,7 +70,6 @@ __weak Viewcontroller *weakSelf = self;
     NSLog(@"xiaohui");
     [self.timer invalidate];
 }
-
 @end
 ```
 
