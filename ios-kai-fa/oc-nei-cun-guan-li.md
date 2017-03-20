@@ -66,6 +66,30 @@ __weak Viewcontroller *weakSelf = self;
 @end
 ```
 
+解决办法：由于循环引用的起因是target，则可以包装一个目标，让target是另一个对象，而不是ViewController即可。
+
+创建一个集成NSObject的分类TimerWeakTarget，创建类方法---开启定时器的方法
+
+```
+#import <Foundation/Foundation.h>
+@interface TimerWeakTarget : NSObject
+@property (nonatomic, assign) SEL selector;
+@property (nonatomic, weak) NSTimer *timer;
+@property (nonatomic, weak) id target;
+
+/** 
+ 1.重写开启定时器方法,在内部对target进行替换,换成本类(TimerWeakTarget)的对象即可
+ 2.不会造成循环引用了,原控制器OneViewController属性有timer对timer强应用,timer内部对self强引用,但是self在此方法内部被替换成了本类的对象(TimerWeakTarget *),而本类的对象不会对OneViewController强引用,则不会造成循环引用,也就不会造成内存泄露
+ */
++ (NSTimer *) scheduledTimerWithTimeInterval:(NSTimeInterval)interval
+                                      target:(id)aTarget
+                                    selector:(SEL)aSelector
+                                    userInfo:(id)userInfo
+                                     repeats:(BOOL)repeats;
+
+@end
+```
+
 ## **僵尸对象：内存已经被回收的对象。**
 
 野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。  
