@@ -29,8 +29,7 @@
          "languages": [
            { "edit":"true",
              "lang": "mode-objectivec.js",
-             "check":"true",
-             "theme":"theme-xcode.js"}
+             "check":"true"}
              ]
          }
        
