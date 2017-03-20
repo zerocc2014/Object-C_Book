@@ -38,7 +38,6 @@ __weak Viewcontroller *weakSelf = self;
 
 @implementation OneViewController
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 -(void)viewDidLoad{
