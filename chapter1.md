@@ -1,6 +1,10 @@
 # First Chapter
 
+gibook 使用：[http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882921](http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882921)
+
 [https://github.com/ChenYilong](https://github.com/ChenYilong)
+
+
 
 video 插件
 

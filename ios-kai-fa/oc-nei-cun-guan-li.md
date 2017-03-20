@@ -28,18 +28,13 @@ __weak Viewcontroller *weakSelf = self;
 
 控制器ViewController跳转进入OneViewController中开启定时器
 
-
-
 ```
 #import "OneViewController.h"
 
 @interface OneViewController ()
-
-
 @property (nonatomic, strong) NSTimer *timer;
 
 @end
-
 
 @implementation OneViewController
 
@@ -64,7 +59,6 @@ __weak Viewcontroller *weakSelf = self;
 
 /** 方法一直执行 */
 -(void)testTimerDeallo{
-
     NSLog(@"-----");
 }
 ```
