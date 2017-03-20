@@ -28,6 +28,8 @@ __weak Viewcontroller *weakSelf = self;
 
 控制器ViewController跳转进入OneViewController中开启定时器
 
+
+
 ```
 #import "OneViewController.h"
 
@@ -79,8 +81,6 @@ __weak Viewcontroller *weakSelf = self;
 
 @end
 ```
-
-
 
 ## **僵尸对象：内存已经被回收的对象。**
 
