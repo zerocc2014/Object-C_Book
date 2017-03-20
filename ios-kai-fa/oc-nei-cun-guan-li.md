@@ -37,25 +37,19 @@ __weak Viewcontroller *weakSelf = self;
 @end
 
 @implementation OneViewController
-
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
 
     [self dismissViewControllerAnimated:YES completion:nil];
 }
-
 -(void)viewDidLoad{
-
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor orangeColor];
-
     /**
      1.__weak typeof(self) weakSelf = self; 不能解决
      */
-
     //开启定时器 
     self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(testTimerDeallo) userInfo:nil repeats:YES];
 }
-
 /** 方法一直执行 */
 -(void)testTimerDeallo{
     NSLog(@"-----");
