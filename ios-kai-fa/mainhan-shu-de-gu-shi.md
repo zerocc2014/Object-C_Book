@@ -11,9 +11,12 @@ int main(){
 ```
 
 ```
+{%ace edit=true, lang='objectivec'%}
+
 -(void)setMutableArray_copy:(NSMutableArray *)mutableArray_copy {
     _mutableArray_copy = [mutableArray_copy mutableCopy];
 }
+{%end ace%}
 ```
 
 
