@@ -123,6 +123,10 @@ TimerWeakTarget.m文件中
 @end
 ```
 
+我们封装的类的方法中，我们将开启定时器的方法\[NSTimer scheduledTimerWithTimeInterval：interval target：timer selector：@selector（fire :\) userInfo：userInfo repeats：repeats\];中的目标换掉了，换成了本类的对象，timer。在OneViewController中开启定时器的时候直接调用这个类方法，就不会造成循环引用。如图：
+
+![](/assets/solveNSTimer-retain-syscle.png)
+
 ## **僵尸对象：内存已经被回收的对象。**
 
 野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。  
