@@ -20,9 +20,7 @@ OC 没有像 Java，C++ 中的那种绝对的私有及保护成员方法，仅�
 ```
 // myClass.h文件
 @interface myClass : NSObject
-
 - (void)PublicMethod; //公开方法，可在其他类或子类进行访问
-
 @end
 
 // myClass.m文件
@@ -58,9 +56,7 @@ OC 没有像 Java，C++ 中的那种绝对的私有及保护成员方法，仅�
 @end
 
 #import "myClass+private.h"
-
 @implementation myClass (private)
-
 @end
 ```
 
