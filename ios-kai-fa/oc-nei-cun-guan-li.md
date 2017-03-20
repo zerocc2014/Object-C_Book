@@ -72,7 +72,9 @@ __weak Viewcontroller *weakSelf = self;
 
 ```
 #import <Foundation/Foundation.h>
+
 @interface TimerWeakTarget : NSObject
+
 @property (nonatomic, assign) SEL selector;
 @property (nonatomic, weak) NSTimer *timer;
 @property (nonatomic, weak) id target;
