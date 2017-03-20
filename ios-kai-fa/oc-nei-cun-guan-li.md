@@ -50,7 +50,6 @@ __weak Viewcontroller *weakSelf = self;
 
     /**
      1.__weak typeof(self) weakSelf = self; 不能解决
-
      */
 
     //开启定时器 
@@ -68,7 +67,6 @@ __weak Viewcontroller *weakSelf = self;
 ```
 /** 开启定时器以后控制器不能被销毁,此方法不会被调用 */
 -(void)dealloc{
-
     NSLog(@"xiaohui");
     [self.timer invalidate];
 }
