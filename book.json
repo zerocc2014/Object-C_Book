@@ -26,11 +26,11 @@
             "fontColor": "00FF00"
           },
      "ace":{
-         "languages": [
+         "languages": 
            { "edit":"true",
              "lang": "mode-objectivec.js",
              "check":"true"}
-             ]
+             
          }
        
  }
