@@ -174,13 +174,184 @@ objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态�
 
 * 上面检测都通过则开始查找这个类的IMP,先从cache里面找,完了找得到就跳到对应的函数去执行。
 
-* 如果cache找不到，通过对象的isa指针获取到类的结构体，然后在方法分发表里面查找方法的selector \(方法分发表既是：class中的方法列表method\_list，它将方法选择器和方法实现地质联系起来\)。
+* 如果cache找不到，通过对象的isa指针获取到类的结构体，然后在方法分发表里面查找方法的selector \(方法分发表既是：class中的方法列表method\_list，它将方法选择器和方法实现联系起来\)。
 
-* 如果分发表找不到，objc\_msgSend 结构体中指向父类的指针找到其父类，并在父类的分发表去找方法的selector，会一直沿着类的继承体系到达NSObject类。一旦定位到selector，函数会就获取到了实现的入口点，并传入相应的参数来执行方法的具体实现,并将该方法添加进入缓存中如果最后没有定位到selector，则会走消息转发流程，
+* 如果分发表找不到，objc\_msgSend 结构体中指向父类的指针找到其父类，并在父类的分发表去找方法的selector，会一直沿着类的继承体系到达NSObject类。一旦定位到selector，函数会就获取到了实现的入口点，并传入相应的参数来执行方法的具体实现,并将该方法添加进入缓存中。如果最后也没有定位到selector，则会走消息转发流程。
+
+### 消息转发
+
+调用方法的方式有两种：
+
+1. \[object message\] 的方式调用方法，如果一个对象无法按上述正常流程接受某一消息时，就会启动所谓“消息转发\(message forwarding\)”机制，通过这一机制，我们可以告诉对象如何处理未知的消息。默认情况下，对象接收到未知的消息，会导致程序崩溃，通过控制台，我们可以看到以下异常信息：这段异常信息实际上是由NSObject的“doesNotRecognizeSelector”方法抛出的。不过，我们可以采取一些措施，让我们的程序执行特定的逻辑，而避免程序的崩溃。
+
+2. 以perform…的形式来调用，则需要等到运行时才能确定object是否能接收message消息。如果不能，则程序崩溃。通常，当我们不能确定一个对象是否能接收某个消息时，会先调用respondsToSelector:来判断一下。如下代码所示：
+
+```
+    if([self respondsToSelector:@selector(method)]){
+        [self performSelector:@selector(method)];
+    }
+```
+
+此处讨论第一种方式的方法调用情况下的消息转发机制，在异常抛出前，Objective-C的运行时会给你三次拯救程序的机会：
+
+* 动态方法解析
+* 备用接受者
+* 完整转发流程
+
+##### 动态方法解析
+
+* resolveInstanceMethod:解析实例方法 
+* resolveClassMethod:解析类方法
+* 通过class\_addMethod的方式将缺少的selector动态创建出来，前提是有提前实现好的IMP（method\_types一致\)
+* 这种方案更多的是为@dynamic属性准备的
+
+对象在接收到未知的消息时，首先会调用所属类的类方法 +resolveInstanceMethod:\(实例方法\)或者 +resolveClassMethod:\(类方法\)。在这个方法中，我们有机会为该未知消息新增一个“处理方法”，通过运行时class\_addMethod函数动态添加到类里面就可以了。
+
+```
+@interface SomeClass : NSObject
+- (void)foo;
+- (void)crash;
+@end
+
+@implementation SomeClass
+
+-(void)foo {
+   NSLog(@"method foo was called on %@", [self class]);
+}
+@end
+```
+
+分别调用这两个方法：
+
+```
+SomeClass *someClass = [[SomeClass alloc] init];
+[someClass foo];
+[someClass crash];
+```
+
+foo 方法正常打印，crash 方法崩溃；运用动态方法解析，Objective-C运行时会调用+ resolveInstanceMethod：或者+ resolveClassMethod :,让你有机会提供一个函数实现。如果你添加了函数并返回YES，那运行时系统就会重新启动一次消息发送的过程。还是以crash为例，你可以这么实现：
+
+```
+@implementation SomeClass
+- (void)foo{
+    NSLog(@"method foo was called on %@",[self class]);
+}
+
+void crashMethod(id obj, SEL _cmd) {
+    NSLog(@"crash Method");
+}
+
++ (BOOL)resolveInstanceMethod:(SEL)sel {
+    if(sel == @selector(crash)){
+        class_addMethod([self class], sel, (IMP)crashMethod, "v@:");
+        return YES;
+    }
+    return [super resolveInstanceMethod:sel];
+}
+@end
+```
+
+`Core Data`有效到这个方法，NSManagedObjects中的属性的getter和setter就是在运行时动态添加的。
+
+如果resolveInstanceMethod：方法返回NO，运行时就会进行下一步：消息转发（Message Forwarding）。
+
+##### 备用接受者
+
+* 如果上一步没有处理，runtime会调用以下方法
+
+* * -\(id\)forwardingTargetForSelector:\(SEL\)aSelector
+* 如果该方法返回非nil的对象，则使用该对象作为新的消息接收者
+  * 不能返回self，会出现无限循环
+  * 如果不知道该返回什么，应该使用\[super forwardingTargetForSelector:aSelector\]
+* 这种方法属于单纯的转发，无法对消息的参数和返回值进行处理
+
+这一步合适于我们只想将消息转发到另一个能处理该消息的对象上。但这一步无法对消息进行处理，如操作消息的参数和返回值。
+
+```
+@interface SomeClass : NSObject
+- (void)foo;
+- (void)crash;
+/**
+ *  把字符串转换为数组
+ *
+ *  @param str 需转换的字符串
+ *
+ *  @return 转换好的数组
+ */
+- (NSArray *)arrayWithString:(NSString *)str;
+@end
+
+@implementation SomeClass
+- (void)foo{
+    NSLog(@"method foo was called on %@",[self class]);
+}
+
+void crashMethod(id obj, SEL _cmd) {
+    NSLog(@"crash Method");
+}
+
++ (BOOL)resolveInstanceMethod:(SEL)sel {
+    if(sel == @selector(crash)){
+        class_addMethod([self class], sel, (IMP)crashMethod, "v@:");
+        return YES;
+    }
+    return [super resolveInstanceMethod:sel];
+}
+
+#pragma mark - 备用接收者
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    //获取方法名
+    NSString *selectorString = NSStringFromSelector(aSelector);
+    //根据方法名添加方法
+    if ([selectorString isEqualToString:@"arrayWithString:"]) {
+        OtherClass *otherClass = [[OtherClass alloc] init];
+        
+        return otherClass;
+    }
+    
+    return [super forwardingTargetForSelector:aSelector];
+}
+@end
+```
+
+```
+#import "OtherClass.h"
+
+@implementation OtherClass
+/**
+ *  把字符串转换为数组
+ *
+ *  @param str 需转换的字符串
+ *
+ *  @return 转换好的数组
+ */
+- (NSArray *)arrayWithString:(NSString *)str
+{
+    if (str && (str != NULL) && (![str isKindOfClass:[NSNull class]]) && str.length > 0) {
+        NSMutableArray *mArr = [NSMutableArray arrayWithCapacity:1];
+        for (NSInteger index = 0; index < str.length; index++) {
+            [mArr addObject:[str substringWithRange:NSMakeRange(index, 1)]];
+        }
+        
+        return mArr;
+    }
+    
+    return nil;
+}
+@end
+```
 
 
 
+##### 完整转发
 
+* - \(void\)forwardInvocation:\(NSInvocation \*\)anInvocation
+
+* 对象需要创建一个NSInvocation对象，把消息调用的全部细节封装进去，包括selector, target, arguments 等参数，还能够对返回结果进行处理
+* 为了使用完整转发，需要重写以下方法
+  * -\(NSMethodSignature \*\)methodSignatureForSelector:\(SEL\)aSelector，如果2中return nil,执行methodSignatureForSelector：
+  * 因为消息转发机制为了创建NSInvocation需要使用这个方法吗获取信息，重写它为了提供合适的方法签名
 
 
 
