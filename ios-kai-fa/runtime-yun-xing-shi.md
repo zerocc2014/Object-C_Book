@@ -21,7 +21,7 @@ typedef struct objc_class *Class;   // An opaque type that represents an Objecti
 ```
 struct objc_class {
     Class isa  OBJC_ISA_AVAILABILITY;     //指向对象类型 是指向元类的指针
- 
+
 #if !__OBJC2__
     Class super_class                       OBJC2_UNAVAILABLE;  // 父类 是指向父类的
     const char *name                        OBJC2_UNAVAILABLE;  // 类名
@@ -33,9 +33,19 @@ struct objc_class {
     struct objc_cache *cache                OBJC2_UNAVAILABLE;  // 方法缓存
     struct objc_protocol_list *protocols    OBJC2_UNAVAILABLE;  // 协议链表
 #endif
- 
+
 } OBJC2_UNAVAILABLE;
 ```
+
+* methodList：这是方法的定义列表，是指针的指针，所以可以通过修改该指针指向的指针的地址，来动态增加方法，这也是Category的实现原理。同理存储对象成员变量的指针是\*vars，所以无法动态增加成员变量。所以Category只能添加方法，却不可添加属性的原因就在于此了。那苹果什么要这么设计呢？简单说Category设计的目的就是用来扩展类功能，而非封装数据，所有的属性和成员变量应该放在主接口（main interface），才能使得类的设计更加清晰。
+
+* objc\_cache：在讲解Effective Objective-C Notes：理解消息传递机制，会发现Objective-C要调用一个方法似乎要经过很多步骤。为了优化方法调用速度，就将调用过的一些方法缓存到到objc\_cache中，后续如果再次调用时，会先从缓存列表里面查找，如此速度便可加快。
+
+此结构体存放类的元数据（metadata），例如类的实例实现了几个方法，具备了多少个实例变量等信息。结构体的首个变量也是isa指针，说明Class本身也是Objective-C对象。对象所属的类型（即isa指针所指向的对象类型）是另一个类，叫做元（metaclass），用来表述对象本身所具备的元数据。类法就定义在此处，因为这些方法可以理解成类对象的实例方法。每个类仅有一个类对象，每个类对象也仅有一个与之相关的元类。
+
+![](/assets/Class.png)
+
+
 
 NSObject 基类定义 :
 
@@ -46,6 +56,8 @@ typedef struct objc_class *Class;
     Class isa  OBJC_ISA_AVAILABILITY;
 }
 ```
+
+objc\_class 2.0 之后的定义：
 
 ```
 typedef struct objc_class *Class;  
@@ -80,8 +92,6 @@ union isa_t
 }
 ```
 
-
-
 代表一个类的实例，对象的定义如下：
 
 ```
@@ -91,14 +101,12 @@ struct objc_object {
 };
 ```
 
-一个类实例的指针，通用对象类型： id 
+一个类实例的指针，通用对象类型： id
 
 ```
 // A pointer to an instance of a class.
 typedef struct objc_object *id;
 ```
-
-
 
 ##### 备注
 
@@ -125,7 +133,7 @@ typedef struct {
        Point point = {10, 20};   
        // 定义指针变量
        PP p = &point;
-           
+
   // 利用指针变量访问结构体成员
    printf("x=%f，y=%f", p->x, p->y);
       return 0;
