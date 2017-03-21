@@ -200,7 +200,7 @@ objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态�
 
 ##### 动态方法解析
 
-* resolveInstanceMethod:解析实例方法 
+* resolveInstanceMethod:解析实例方法 
 * resolveClassMethod:解析类方法
 * 通过class\_addMethod的方式将缺少的selector动态创建出来，前提是有提前实现好的IMP（method\_types一致\)
 * 这种方案更多的是为@dynamic属性准备的
@@ -306,10 +306,10 @@ void crashMethod(id obj, SEL _cmd) {
     //根据方法名添加方法
     if ([selectorString isEqualToString:@"arrayWithString:"]) {
         OtherClass *otherClass = [[OtherClass alloc] init];
-        
+
         return otherClass;
     }
-    
+
     return [super forwardingTargetForSelector:aSelector];
 }
 @end
@@ -333,18 +333,16 @@ void crashMethod(id obj, SEL _cmd) {
         for (NSInteger index = 0; index < str.length; index++) {
             [mArr addObject:[str substringWithRange:NSMakeRange(index, 1)]];
         }
-        
+
         return mArr;
     }
-    
+
     return nil;
 }
 @end
 ```
 
-
-
-##### 完整转发
+##### 完整消息转发
 
 * - \(void\)forwardInvocation:\(NSInvocation \*\)anInvocation
 
@@ -353,13 +351,70 @@ void crashMethod(id obj, SEL _cmd) {
   * -\(NSMethodSignature \*\)methodSignatureForSelector:\(SEL\)aSelector，如果2中return nil,执行methodSignatureForSelector：
   * 因为消息转发机制为了创建NSInvocation需要使用这个方法吗获取信息，重写它为了提供合适的方法签名
 
+如果在上一步备用接收者还不能处理未知消息，则唯一能做的就是启用完整的消息转发机制了。此时会调用方法：
 
+```
+- (void)forwardInvocation:(NSInvocation *)anInvocation，
+```
 
+对象会创建一个表示消息的 NSInvocation 对象，把与尚未处理的消息有关的全部细节都封装在anInvocation中，包括selector，目标\(target\)和参数。我们可以在forwardInvocation方法中选择将消息转发给其它对象。forwardInvocation:方法的实现有两个任务：  
+   &lt; 1&gt; 定位可以响应封装在anInvocation中的消息的对象。这个对象不需要能处理所有未知消息。  
+  &lt; 2 &gt; 使用anInvocation作为参数，将消息发送到选中的对象。anInvocation将会保留调用结果，运行时系统会提取这一结果并将其发送 到消息的原始发送者。
 
+还有一个很重要的问题，我们必须重写以下方法：- \(NSMethodSignature \*\)methodSignatureForSelector:\(SEL\)aSelector,消息转发机制使用从这个方法中获取的信息来创建NSInvocation对象。因此我们必须重写这个方法，为给定的selector提供一个合适的方法签名。
 
+向OtherClass.m中添加如下方法：
 
+```
+/**
+ *  逆置字符串
+ *
+ *  @param str 需逆置的字符串
+ *
+ *  @return 置换后的字符串
+ */
+- (NSString *)inverseWithString:(NSString *)str
+{
+    if (str && (str != NULL) && (![str isKindOfClass:[NSNull class]]) && str.length > 0) {
+        NSMutableString *mStr = [NSMutableString stringWithCapacity:1];
+        for (NSInteger index = str.length; index > 0; index--) {
+            [mStr appendString:[str substringWithRange:NSMakeRange(index - 1, 1)]];
+        }
+        return mStr;
+    }
+    return nil;
+}
+```
 
+向SomeClass.m中添加如下方法：
 
+```
+#pragma mark - 完整消息转发
+//必须重写这个方法，为给定的selector提供一个合适的方法签名。
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+    NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
+    if (!signature) {
+        if ([OtherClass instancesRespondToSelector:aSelector]) {
+            //获取方法签名
+            signature = [OtherClass instanceMethodSignatureForSelector:aSelector];
+        }
+    }
+    return signature;
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation
+{
+    //anInvocation选择将消息转发给其它对象
+    if ([OtherClass instancesRespondToSelector:anInvocation.selector]) {
+        [anInvocation invokeWithTarget:[[OtherClass alloc] init]];
+    }
+}
+```
+
+发送消息的整体流程图：
+
+![](/assets/methodForward.png)
 
 
 
