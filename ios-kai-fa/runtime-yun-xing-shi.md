@@ -572,6 +572,7 @@ void crashMethod(id obj, SEL _cmd) {
 * 交换方法实现
 
 * 能动态添加一个成员变量
+
 * 能动态添加一个属性
 * 字典转模型
 * runtime归档/反归档
@@ -714,6 +715,102 @@ static const char *key = "name";
 }
 @end
 ```
+
+### 4. 归档和解档
+
+如果需要实现一些基本数据的数据持久化\(data persistance\)或者数据共享\(data share\)。我们可以选择归档和解档。如果用一般的方法:
+
+```
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.name forKey:@"nameKey"];
+    [aCoder encodeObject:self.gender forKey:@"genderKey"];
+    [aCoder encodeObject:[NSNumber numberWithInteger:self.age] forKey:@"ageKey"];
+}
+```
+
+也可以实现。但是如果实体类有很多的成员变量，这种方法很显然就无力了。这个时候，我们就可以利用`runtime`来实现快速归档、解档:
+
+* 让实体类遵循`<NSCoding>`协议。并在.m文件导入头文件`<objc/runtime.h>`。
+* 实现`- (instancetype)initWithCoder:(NSCoder *)aDecoder`和`- (void)encodeWithCoder:(NSCoder *)aCoder`方法。
+
+```
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        //
+        unsigned int count = 0;
+        objc_property_t *properties = class_copyPropertyList([self class], &count);
+        for (int i = 0; i < count; i ++) {
+            objc_property_t property = properties[i];
+            const char *propertyChar = property_getName(property);
+            NSString *propertyString = [NSString stringWithUTF8String:propertyChar];
+            id value = [aDecoder decodeObjectForKey:propertyString];
+            [self setValue:value forKey:propertyString];
+        }
+        free(properties);
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    unsigned int count = 0;
+    objc_property_t *properties = class_copyPropertyList([self class], &count);
+    for (int i = 0; i < count; i ++) {
+        objc_property_t property = properties[i];
+        const char *propertyChar = property_getName(property);
+        NSString *propertyString = [NSString stringWithUTF8String:propertyChar];
+        id object = [self valueForKey:propertyString];
+        [aCoder encodeObject:object forKey:propertyString];
+    }
+    free(properties);
+}
+```
+
+在main.m 函数中测试
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
