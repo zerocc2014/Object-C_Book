@@ -275,6 +275,10 @@ typedef id (*IMP)(id, SEL, ...);
 
 你会发现IMP指向的方法与objc\_msgSend函数类型相同，参数都包含id和SEL类型。每个方法名都对应一个SEL类型的方法选择器，而每个实例对象中的SEL对应的方法实现肯定是唯一的，通过一组id和SEL参数就能确定唯一的方法实现地址；反之亦然。
 
+每个类都有一个方法列表，存放着selector的名字和方法实现的映射关系。IMP有点类似函数指针，指向具体的Method实现，SEL与IMP之间的关系图：
+
+![](/assets/SEL&IMP.png)
+
 获取方法地址IMP避开消息绑定而直接获取方法的地址并调用方法。这种做法很少用，除非是需要持续大量重复调用某方法的极端情况，避开消息发送泛滥而直接调用该方法会更高效。NSObject类中有个methodForSelector:实例方法，你可以用它来获取某个方法选择器对应的IMP，举个栗子：
 
 ```
@@ -558,4 +562,207 @@ void crashMethod(id obj, SEL _cmd) {
 发送消息的整体流程图：
 
 ![](/assets/methodForward.png)
+
+
+
+## Runtime 运用
+
+* 能获得某个类的所有成员变量
+* 能获得某个类的所有属性
+* 能获得某个类的所有方法
+
+* 交换方法实现
+* 能动态添加一个成员变量
+* 能动态添加一个属性
+* 字典转模型
+* runtime归档/反归档
+
+### 1. 交换方法
+
+* 开发使用场景:系统自带的方法功能不够，给系统自带的方法扩展一些功能，并且保持原有的功能。
+* 方式一:继承系统的类，重写方法
+* 方式二:使用runtime,交换方法.
+
+```
+@implementation ViewController
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+    // 需求：给imageNamed方法提供功能，每次加载图片就判断下图片是否加载成功。
+    // 步骤一：先搞个分类，定义一个能加载图片并且能打印的方法+ (instancetype)imageWithName:(NSString *)name;
+    // 步骤二：交换imageNamed和imageWithName的实现，就能调用imageWithName，间接调用imageWithName的实现。
+    UIImage *image = [UIImage imageNamed:@"123"];
+}
+@end
+
+@implementation UIImage (Image)
+// 加载分类到内存的时候调用
++ (void)load
+{
+    // 交换方法
+
+    // 获取imageWithName方法地址
+    Method imageWithName = class_getClassMethod(self, @selector(imageWithName:));
+
+    // 获取imageWithName方法地址
+    Method imageName = class_getClassMethod(self, @selector(imageNamed:));
+
+    // 交换方法地址，相当于交换实现方式
+    method_exchangeImplementations(imageWithName, imageName);
+}
+
+// 不能在分类中重写系统方法imageNamed，因为会把系统的功能给覆盖掉，而且分类中不能调用super.
+
+// 既能加载图片又能打印
++ (instancetype)imageWithName:(NSString *)name
+{
+    // 这里调用imageWithName，相当于调用imageName
+    UIImage *image = [self imageWithName:name];
+
+    if (image == nil) {
+        NSLog(@"加载空的图片");
+    }
+    return image;
+}
+@end
+```
+
+### 2. 动态添加方法
+
+* 开发使用场景：如果一个类方法非常多，加载类到内存的时候也比较耗费资源，需要给每个方法生成映射表，可以使用动态给某个类，添加方法解决。
+* 经典面试题：有没有使用performSelector，其实主要想问你有没有动态添加过方法。
+* 简单使用
+
+```
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+
+    Person *p = [[Person alloc] init];
+
+    // 默认person，没有实现eat方法，可以通过performSelector调用，但是会报错。
+    // 动态添加方法就不会报错
+    [p performSelector:@selector(eat)];
+
+}
+@end
+
+@implementation Person
+// void(*)()
+// 默认方法都有两个隐式参数，
+void eat(id self,SEL sel)
+{
+    NSLog(@"%@ %@",self,NSStringFromSelector(sel));
+}
+
+// 当一个对象调用未实现的方法，会调用这个方法处理,并且会把对应的方法列表传过来.
+// 刚好可以用来判断，未实现的方法是不是我们想要动态添加的方法
++ (BOOL)resolveInstanceMethod:(SEL)sel
+{
+    if (sel == @selector(eat)) {
+        // 动态添加eat方法
+
+        // 第一个参数：给哪个类添加方法
+        // 第二个参数：添加方法的方法编号
+        // 第三个参数：添加方法的函数实现（函数地址）
+        // 第四个参数：函数的类型，(返回值+参数类型) v:void @:对象->self :表示SEL->_cmd
+        class_addMethod(self, @selector(eat), eat, "v@:");
+    }
+    return [super resolveInstanceMethod:sel];
+}
+@end
+```
+
+### 3. 给分类添加属性
+
+原理：给一个类声明属性，其实本质就是给这个类添加关联，并不是直接把这个值的内存空间添加到类存空间。
+
+```
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    // 给系统NSObject类动态添加属性name
+    NSObject *objc = [[NSObject alloc] init];
+    objc.name = @"zerocc";
+    NSLog(@"%@",objc.name);
+}
+@end
+
+// 定义关联的key
+static const char *key = "name";
+
+@implementation NSObject (Property)
+
+- (NSString *)name
+{
+    // 根据关联的key，获取关联的值。
+    return objc_getAssociatedObject(self, key);
+}
+
+- (void)setName:(NSString *)name
+{
+    // 第一个参数：给哪个对象添加关联
+    // 第二个参数：关联的key，通过这个key获取
+    // 第三个参数：关联的value
+    // 第四个参数:关联的策略
+    objc_setAssociatedObject(self, key, name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+@end
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
