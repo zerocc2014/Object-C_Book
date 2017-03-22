@@ -164,7 +164,7 @@ typedef struct objc_selector *SEL;
 
 其实它就是个映射到方法的C字符串，你可以用 Objc 编译器命令@selector\(\)或者 Runtime 系统的 sel\_registerName函数来获得一个SEL类型的方法选择器。
 
-不同类中相同名字的方法所对应的方法选择器是相同的，即使方法名字相同而变量类型不同也会导致它们具有相同的方法选择器，于是 Objc 中方法命名有时会带上参数类型\(NSNumber一堆抽象工厂方法拿走不谢\)，Cocoa 中有好多长长的方法....。
+不同类中相同名字的方法所对应的方法选择器是相同的，即使方法名字相同而变量类型不同也会导致它们具有相同的方法选择器，于是 Objc 中方法命名有时会带上参数类型\(NSNumber一堆抽象工厂方法\)，Cocoa 中有好多长长的方法....。
 
 ### id
 
@@ -828,5 +828,113 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+### 5. 控制器的万能跳转
 
+```
+- (void)testRuntime
+{
+    NSDictionary *userInfo = @{@"class":@"CCRuntimePushVC",
+                               @"property": @{
+                                       @"ID":@"81198",
+                                       @"type":@"2"
+                                       }
+                               };
+    [self push:userInfo];
+}
+
+// 跳转
+- (void)push:(NSDictionary *)params
+{
+    // 得到类名
+    NSString *className = [NSString stringWithFormat:@"%@",params[@"class"]];
+    
+    // 通过名称转换成Class
+    Class getClass = NSClassFromString([NSString stringWithFormat:@"%@",className]);
+    
+    // 判断得到的这个class 是否存在
+    if (getClass) {
+        // 创建 class 对象
+        id creatClass = [[getClass alloc] init];
+        
+        NSDictionary *propertys = params[@"property"];
+        [propertys enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            
+            if ([self checkIsExistPropertyWithInstance:creatClass verifyPropertyName:key]) {
+                // 利用 kvc 赋值
+                [creatClass setValue:obj forKey:key];
+            }
+        }];
+        
+        [self.navigationController pushViewController:creatClass animated:YES];
+    }else{
+        NSLog(@"not this class,can not push");
+    }
+}
+
+// 检查对象是否存在该属性
+- (BOOL)checkIsExistPropertyWithInstance:(id)instance verifyPropertyName:(NSString *)verifyPropertyName
+{
+    unsigned int outCount, i;
+    // 获取对象的属性列表
+    objc_property_t *properties = class_copyPropertyList([instance class], &outCount);
+    
+    for (i = 0; i < outCount; i++) {
+        objc_property_t property = properties[i];
+        // 属性名转换成字符串
+        NSString *propertyName = [[NSString alloc] initWithCString:property_getName(property)  encoding:NSUTF8StringEncoding];
+        // 判断该属性是否存在
+        if ([propertyName isEqualToString:verifyPropertyName]) {
+            free(properties);
+            
+            return YES;
+        }
+    }
+    free(properties);
+    
+    return NO;
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self testRuntime];
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+参考：[https://halfrost.com/objc\_runtime\_isa\_class/](https://halfrost.com/objc_runtime_isa_class/)
 
