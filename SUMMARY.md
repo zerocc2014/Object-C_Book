@@ -11,7 +11,7 @@
     * [细节杂记](ios-kai-fa/oc-ji-chu/xi-jie-za-ji.md)
     * 代理与通知
     * Block 详解
-    * KVC 与 KVO 剖析
+    * [KVC 与 KVO 剖析](ios-kai-fa/oc-ji-chu/kvc-yu-kvo-pou-xi.md)
     * [OC 中内存分配](ios-kai-fa/oc-ji-chu/oc-zhong-nei-cun-fen-pei.md)
   * [Main 函数的故事](ios-kai-fa/mainhan-shu-de-gu-shi.md)
   * Runloop

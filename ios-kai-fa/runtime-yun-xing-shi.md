@@ -138,7 +138,7 @@ typedef struct {
 }
 ```
 
-## OC方法动态调用
+## OC方法动态调用基础术语
 
 OC只是在编译阶段确定了要向接收者发送message这条消息，而receive将要如何响应这条消息，那就要看运行时发生的情况来决定了。通过发送消息来达到动态调用：
 
@@ -150,19 +150,161 @@ OC只是在编译阶段确定了要向接收者发送message这条消息，而re
 id objc_msgSend(id self, SEL op, ... );  // objc_msgSend(obj, selector, arg1, arg2, ...)
 ```
 
-如果消息的接收者能够找到对应的selector，那么就相当于直接执行了接收者这个对象的特定方法；否则，消息要么被转发，或是临时向接收者动态添加这个 selector 对应的实现内容，要么就干脆玩完崩溃掉。
+如果消息的接收者能够找到对应的selector，那么就相当于直接执行了接收者这个对象的特定方法；否则，消息要么被转发，或是临时向接收者动态添加这个 selector 对应的实现内容，要么就崩溃掉。
 
-#### `id objc_msgSend (id self,SEL op, ... )  //对应的数据结构：`
+下面将会逐渐展开介绍一些术语，及它们各自对应的数据结构。
 
-SEL：方法编号, objc\_msgSend函数的第二个参数，它是selector在Objc中的表示类型（Swift中是Selector类）。selector是方法选择器，可以理解为区分方法的ID，而这个ID的数据结构是SEL:
+### SEL
+
+objc\_msgSend函数第二个参数类型为SEL，它是selector在Objc中的表示类型（Swift中是Selector类）。selector是方法选择器，可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
 
 ```
-             typedef struct objc_selector *SEL;
+typedef struct objc_selector *SEL;
 ```
 
-其实它就是个映射到方法的C字符串，你可以用Objc编译器命令@selector\(\)或者Runtime系统的sel\_registerName函数来获得一个          SEL类型的方法选择器。
+其实它就是个映射到方法的C字符串，你可以用 Objc 编译器命令@selector\(\)或者 Runtime 系统的 sel\_registerName函数来获得一个SEL类型的方法选择器。
 
-不同类中相同名字的方法所对应的方法选择器是相同的，即使方法名字相同而变量类型不同也会导致它们具有相同的方法选择器，于是Objc中方法命名有时会带上参数类型\(NSNumber一堆抽象工厂方法拿走不谢\)。
+不同类中相同名字的方法所对应的方法选择器是相同的，即使方法名字相同而变量类型不同也会导致它们具有相同的方法选择器，于是 Objc 中方法命名有时会带上参数类型\(NSNumber一堆抽象工厂方法拿走不谢\)，Cocoa 中有好多长长的方法....。
+
+### id
+
+objc\_msgSend第一个参数类型为id，objc.h中可以查看,它是一个指向类实例的指针：
+
+```
+typedef struct objc_object *id;
+```
+
+objc\_object又是：
+
+```
+struct objc_object {
+    Class isa  OBJC_ISA_AVAILABILITY;
+};
+```
+
+objc\_object结构体包含一个isa指针，指向它的类别Class，根据isa指针就可以一层层找到对象所属的类。
+
+### Class
+
+之所以说 isa 是指针是因为Class其实是一个指向 objc\_class 结构体的指针：
+
+```
+typedef struct objc_class *Class;
+```
+
+```
+而objc_class，查看 <objc/runtime.h> 中 objc_class 结构体的定义如下：
+```
+
+```
+struct objc_class {
+    Class isa  OBJC_ISA_AVAILABILITY;
+
+#if !__OBJC2__
+    Class super_class                                        OBJC2_UNAVAILABLE;
+    const char *name                                         OBJC2_UNAVAILABLE;
+    long version                                             OBJC2_UNAVAILABLE;
+    long info                                                OBJC2_UNAVAILABLE;
+    long instance_size                                       OBJC2_UNAVAILABLE;
+    struct objc_ivar_list *ivars                             OBJC2_UNAVAILABLE;
+    struct objc_method_list **methodLists                    OBJC2_UNAVAILABLE;
+    struct objc_cache *cache                                 OBJC2_UNAVAILABLE;
+    struct objc_protocol_list *protocols                     OBJC2_UNAVAILABLE;
+#endif
+
+} OBJC2_UNAVAILABLE;
+```
+
+可以看到运行时一个类还关联了它的超类指针，类名，成员变量，方法，缓存，还有附属的协议。
+
+\*\*methodLists//指针的指针，可以动态修改\*methodLists的值来添加成员方法,同样解释了Category不能添加属性的原因,二级指针
+
+其中objc\_ivar\_list和objc\_method\_list分别是成员变量列表和方法列表：
+
+```
+struct objc_ivar_list {
+            int ivar_count                                           OBJC2_UNAVAILABLE;
+        #ifdef __LP64__
+            int space                                                OBJC2_UNAVAILABLE;
+        #endif
+            /* variable length structure */
+            struct objc_ivar ivar_list[1]                            OBJC2_UNAVAILABLE;
+        }                                                            OBJC2_UNAVAILABLE;
+        struct objc_method_list {
+            struct objc_method_list *obsolete                        OBJC2_UNAVAILABLE;
+            int method_count                                         OBJC2_UNAVAILABLE;
+        #ifdef __LP64__
+            int space                                                OBJC2_UNAVAILABLE;
+        #endif
+            /* variable length structure */
+            struct objc_method method_list[1]                        OBJC2_UNAVAILABLE;
+        }
+```
+
+### **Method**
+
+Method是一种代表类中的某个方法的类型。
+
+```
+typedef struct objc_method *Method;
+```
+
+而objc\_method在上面的方法列表中提到过，它存储了方法名，方法类型和方法实现：
+
+```
+struct objc_method {
+        SEL method_name                                          OBJC2_UNAVAILABLE;
+        char *method_types                                       OBJC2_UNAVAILABLE;
+        IMP method_imp                                           OBJC2_UNAVAILABLE;
+    }
+```
+
+* 方法名类型为SEL，前面提到过相同名字的方法即使在不同类中定义，它们的方法选择器也相同。
+* 方法类型method\_types是个char指针，其实存储着方法的参数类型和返回值类型。
+* method\_imp指向了方法的实现，本质上是一个函数指针，后面会详细讲到
+
+### IMP
+
+函数指针 - IMP 在objc.h中的定义是：
+
+```
+typedef id (*IMP)(id, SEL, ...);
+```
+
+它就是一个函数指针，这是由编译器生成的。当你发起一个 ObjC 消息之后，最终它会执行的那段代码，就是由这个函数指针指定的。而IMP这个函数指针就指向了这个方法的实现。既然得到了执行某个实例某个方法的入口，我们就可以绕开消息传递阶段，直接执行方法，这在后面会提到。
+
+你会发现IMP指向的方法与objc\_msgSend函数类型相同，参数都包含id和SEL类型。每个方法名都对应一个SEL类型的方法选择器，而每个实例对象中的SEL对应的方法实现肯定是唯一的，通过一组id和SEL参数就能确定唯一的方法实现地址；反之亦然。
+
+获取方法地址IMP避开消息绑定而直接获取方法的地址并调用方法。这种做法很少用，除非是需要持续大量重复调用某方法的极端情况，避开消息发送泛滥而直接调用该方法会更高效。NSObject类中有个methodForSelector:实例方法，你可以用它来获取某个方法选择器对应的IMP，举个栗子：
+
+```
+void (*setter)(id, SEL, BOOL);
+        int i;
+        setter = (void (*)(id, SEL, BOOL))[target
+                                           methodForSelector:@selector(setFilled:)];
+        for ( i = 0 ; i < 1000 ; i++ )
+        setter(targetList[i], @selector(setFilled:), YES);
+```
+
+### Cache
+
+Cache在 runtime.h 中的定义：
+
+```
+typedef struct objc_cache *Cache                             OBJC2_UNAVAILABLE;
+```
+
+在类 objc\_class 结构体中有一个struct objc\_cache \*cache，它到底是缓存啥的呢，先看看objc\_cache 的实现：
+
+```
+struct objc_cache {
+        unsigned int mask /* total = mask + 1 */                 OBJC2_UNAVAILABLE;
+        unsigned int occupied                                    OBJC2_UNAVAILABLE;
+        Method buckets[1]                                        OBJC2_UNAVAILABLE;
+    };
+```
+
+Cache为方法调用的性能进行优化,通俗地讲,每当实例对象接收到一个消息时,它不会直接在isa指向的类的方法列表中遍历查找能够响应消息的方法，因为这样效率太低了，而是优先在Cache中查找。Runtime系统会把被调用的方法存到Cache中（理论上讲一个方法如果被调用，那么它有可能今后还会被调用）method\_name作为key，method\_imp作为value给存起来，下次查找的时候效率更高。这根计算机组成原理中学过的CPU绕过主存先访问Cache的道理挺像，猜测苹果为提高Cache命中率应该也做了努力吧。高速缓存\(cache\) -&gt;内存-&gt;虚拟内存-&gt;磁盘
 
 ## OC 消息发送流程
 
@@ -344,10 +486,11 @@ void crashMethod(id obj, SEL _cmd) {
 
 ##### 完整消息转发
 
-* - \(void\)forwardInvocation:\(NSInvocation \*\)anInvocation
-
+* * \(void\)forwardInvocation:\(NSInvocation \*\)anInvocation
 * 对象需要创建一个NSInvocation对象，把消息调用的全部细节封装进去，包括selector, target, arguments 等参数，还能够对返回结果进行处理
+
 * 为了使用完整转发，需要重写以下方法
+
   * -\(NSMethodSignature \*\)methodSignatureForSelector:\(SEL\)aSelector，如果2中return nil,执行methodSignatureForSelector：
   * 因为消息转发机制为了创建NSInvocation需要使用这个方法吗获取信息，重写它为了提供合适的方法签名
 
@@ -415,20 +558,4 @@ void crashMethod(id obj, SEL _cmd) {
 发送消息的整体流程图：
 
 ![](/assets/methodForward.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
