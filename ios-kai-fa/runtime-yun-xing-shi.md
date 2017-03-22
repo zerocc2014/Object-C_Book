@@ -574,6 +574,7 @@ void crashMethod(id obj, SEL _cmd) {
 * 能动态添加一个成员变量
 
 * 能动态添加一个属性
+
 * 字典转模型
 * runtime归档/反归档
 
@@ -766,49 +767,35 @@ static const char *key = "name";
 }
 ```
 
-在main.m 函数中测试
+在main.m 函数中测试归档解档：
 
+```
+#import <Foundation/Foundation.h>
+#import "Model.h"
 
+int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+        Model *model = [Model new];
+        model.name = @"kxx";
+        model.age = 24;
+        model.gender = @"male";
 
+        NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:@"modelData.data"];
 
+        // 归档
+        BOOL flag = [NSKeyedArchiver archiveRootObject:model toFile:path];
+        if (flag) {
+            NSLog(@"archive object successfully!!!");
+        }
 
+        // 解档
+        Model *unarchivedModel = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        NSLog(@"\n\n%@\n%@\n%ld", unarchivedModel.name, unarchivedModel.gender, unarchivedModel.age);
+    }
+    return 0;
+}
+```
 
 
 
