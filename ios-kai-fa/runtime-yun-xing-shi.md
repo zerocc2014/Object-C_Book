@@ -576,6 +576,7 @@ void crashMethod(id obj, SEL _cmd) {
 * 能动态添加一个属性
 
 * 字典转模型
+
 * runtime归档/反归档
 
 ### 1. 交换方法
@@ -717,7 +718,10 @@ static const char *key = "name";
 @end
 ```
 
-### 4. 归档和解档
+### 4. 归档和解档 一键序列化
+
+* 原理描述：用runtime提供的函数遍历Model自身所有属性，并对属性进行encode和decode操作。
+* 核心方法：在Model的基类中重写方法：
 
 如果需要实现一些基本数据的数据持久化\(data persistance\)或者数据共享\(data share\)。我们可以选择归档和解档。如果用一般的方法:
 
@@ -767,6 +771,33 @@ static const char *key = "name";
 }
 ```
 
+或者这种写法：
+
+```
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        unsigned int outCount;
+        Ivar * ivars = class_copyIvarList([self class], &outCount);
+        for (int i = 0; i < outCount; i ++) {
+            Ivar ivar = ivars[i];
+            NSString * key = [NSString stringWithUTF8String:ivar_getName(ivar)];
+            [self setValue:[aDecoder decodeObjectForKey:key] forKey:key];
+        }
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    unsigned int outCount;
+    Ivar * ivars = class_copyIvarList([self class], &outCount);
+    for (int i = 0; i < outCount; i ++) {
+        Ivar ivar = ivars[i];
+        NSString * key = [NSString stringWithUTF8String:ivar_getName(ivar)];
+        [aCoder encodeObject:[self valueForKey:key] forKey:key];
+    }
+}
+```
+
 在main.m 函数中测试归档解档：
 
 ```
@@ -796,8 +827,6 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
-
-
 
 
 
