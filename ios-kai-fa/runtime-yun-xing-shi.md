@@ -171,7 +171,7 @@ typedef struct objc_selector *SEL;
 objc\_msgSend第一个参数类型为id，objc.h中可以查看,它是一个指向类实例的指针：
 
 ```
-typedef struct objc_object *id;
+typedef struct objc_object *id;    // 结构体指针
 ```
 
 objc\_object又是：
