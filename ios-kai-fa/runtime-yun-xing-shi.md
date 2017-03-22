@@ -563,8 +563,6 @@ void crashMethod(id obj, SEL _cmd) {
 
 ![](/assets/methodForward.png)
 
-
-
 ## Runtime 运用
 
 * 能获得某个类的所有成员变量
@@ -572,6 +570,7 @@ void crashMethod(id obj, SEL _cmd) {
 * 能获得某个类的所有方法
 
 * 交换方法实现
+
 * 能动态添加一个成员变量
 * 能动态添加一个属性
 * 字典转模型
@@ -715,54 +714,6 @@ static const char *key = "name";
 }
 @end
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
