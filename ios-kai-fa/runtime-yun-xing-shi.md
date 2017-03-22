@@ -830,6 +830,11 @@ int main(int argc, const char * argv[]) {
 
 ### 5. 控制器的万能跳转
 
+应用场景：
+
+* 推送：根据服务端推送过来的数据规则，跳转到对应的控制器
+* 列表：不同类似的名字，可能跳转不同的控制器，任意跳转
+
 ```
 - (void)testRuntime
 {
@@ -847,24 +852,24 @@ int main(int argc, const char * argv[]) {
 {
     // 得到类名
     NSString *className = [NSString stringWithFormat:@"%@",params[@"class"]];
-    
+
     // 通过名称转换成Class
     Class getClass = NSClassFromString([NSString stringWithFormat:@"%@",className]);
-    
+
     // 判断得到的这个class 是否存在
     if (getClass) {
         // 创建 class 对象
         id creatClass = [[getClass alloc] init];
-        
+
         NSDictionary *propertys = params[@"property"];
         [propertys enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-            
+
             if ([self checkIsExistPropertyWithInstance:creatClass verifyPropertyName:key]) {
                 // 利用 kvc 赋值
                 [creatClass setValue:obj forKey:key];
             }
         }];
-        
+
         [self.navigationController pushViewController:creatClass animated:YES];
     }else{
         NSLog(@"not this class,can not push");
@@ -877,7 +882,7 @@ int main(int argc, const char * argv[]) {
     unsigned int outCount, i;
     // 获取对象的属性列表
     objc_property_t *properties = class_copyPropertyList([instance class], &outCount);
-    
+
     for (i = 0; i < outCount; i++) {
         objc_property_t property = properties[i];
         // 属性名转换成字符串
@@ -885,56 +890,19 @@ int main(int argc, const char * argv[]) {
         // 判断该属性是否存在
         if ([propertyName isEqualToString:verifyPropertyName]) {
             free(properties);
-            
+
             return YES;
         }
     }
     free(properties);
-    
+
     return NO;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self testRuntime];
 }
-
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 参考：[https://halfrost.com/objc\_runtime\_isa\_class/](https://halfrost.com/objc_runtime_isa_class/)
 
