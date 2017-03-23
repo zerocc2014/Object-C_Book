@@ -1,6 +1,5 @@
-书籍：《深入解析Mac OS X & iOS操作系统》
-
-# OS X 和 iOS的架构
+书籍：《深入解析Mac OS X & iOS操作系统》  OS X 和 iOS的架构
+[书籍总结博客地址](http://blog.csdn.net/leechenglong/article/details/40372401)
 
 ##### OS X 和 iOS的层次结构：
 
@@ -20,7 +19,7 @@
 
 ##### 核心操作系统层（Core OS Layer）：
 
-   Core OS是用 FreeBSD 和Mach 所改写的 Darwin，是开源且符合 POSIX 标准的一个 Unix 核心。这层提供了整个 iOS 系统的一些基础功能，如：硬件驱动, 内存管理，程序管理，线程管理（POSIX），文件系统，网络（BSD Socket）,以及标准输入输出等等，所有这些功能都会通过 C语言 的API来提供。
+Core OS是用 FreeBSD 和Mach 所改写的 Darwin，是开源且符合 POSIX 标准的一个 Unix 核心。这层提供了整个 iOS 系统的一些基础功能，如：硬件驱动, 内存管理，程序管理，线程管理（POSIX），文件系统，网络（BSD Socket）,以及标准输入输出等等，所有这些功能都会通过 C语言 的API来提供。
 
 核心OS层的驱动也提供了硬件和系统框架之间的接口。然而，由于安全的考虑，只有有限的系统框架类能访问内核和驱动。
 
