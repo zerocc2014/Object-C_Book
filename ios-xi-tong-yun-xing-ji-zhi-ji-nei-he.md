@@ -1,6 +1,7 @@
 书籍：《深入解析Mac OS X & iOS操作系统》  OS X 和 iOS的架构
 [书籍总结博客地址](http://blog.csdn.net/leechenglong/article/details/40372401)
-
+[操作系统内核文章](http://www.jianshu.com/u/360a4cffa818)
+[操作系统内核文章2](http://blog.okeyang.com/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/)
 ##### OS X 和 iOS的层次结构：
 
 * Cocoa Touch Layer用户体验层：Aqua、Dashboard、Spotlight 和辅助功能\(Accessibility\)，iOS SpringBoard 同时支持Spotllight；
