@@ -8,6 +8,8 @@ gibook 使用：[http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882
 
 [https://github.com/ChenYilong](https://github.com/ChenYilong)
 
+[cocopods](http://www.jianshu.com/p/3086df14ed08\)
+
 ```
 clang -rewrite-objc hello.m
 ```
