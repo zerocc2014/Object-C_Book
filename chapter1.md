@@ -10,6 +10,8 @@ gibook 使用：[http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882
 
 [cocopods](http://www.jianshu.com/p/3086df14ed08\)
 
+[oc文件编译过程](http://ios.jobbole.com/92364/\)
+
 ```
 clang -rewrite-objc hello.m
 ```
