@@ -8,7 +8,7 @@
   * [设计模式](ji-chu-zhi-shi/she-ji-mo-shi.md)
 * [iOS 开发](ios-kai-fa.md)
   * [OC 基础](ios-kai-fa/oc-ji-chu.md)
-    * [细节杂记](ios-kai-fa/oc-ji-chu/xi-jie-za-ji.md)
+    * [类与对象](ios-kai-fa/oc-ji-chu/xi-jie-za-ji.md)
     * 代理与通知
     * Block 详解
     * [KVC 与 KVO 剖析](ios-kai-fa/oc-ji-chu/kvc-yu-kvo-pou-xi.md)
@@ -18,7 +18,7 @@
   * [Runtime 运行时](ios-kai-fa/runtime-yun-xing-shi.md)
   * [UI 响应者链](ios-kai-fa/uixiang-ying-zhe-lian.md)
   * [OC 内存管理](ios-kai-fa/oc-nei-cun-guan-li.md)
-  * OC 多线程
+  * [OC 多线程](ios-kai-fa/oc-duo-xian-cheng.md)
   * OC 音视频
   * OC 网络层
   * 动画
