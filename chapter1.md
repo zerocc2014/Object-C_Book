@@ -2,13 +2,15 @@
 
 #### 每日计划：20号：runtime  数据结构：5页；
 
- 
-
 ---
 
 gibook 使用：[http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882921](http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882921)
 
 [https://github.com/ChenYilong](https://github.com/ChenYilong)
+
+```
+clang -rewrite-objc hello.m
+```
 
 video 插件
 
