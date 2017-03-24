@@ -12,6 +12,8 @@ gibook 使用：[http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882
 
 [oc文件编译过程](http://ios.jobbole.com/92364/\)
 
+[所有博客地址](http://www.jianshu.com/p/c47c24ab1e76)
+
 ```
 clang -rewrite-objc hello.m
 ```
