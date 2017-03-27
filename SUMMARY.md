@@ -26,4 +26,6 @@
 * [热更新技术](re-geng-xin-ji-zhu.md)
 * [数据加密](shu-ju-jia-mi.md)
 * [bug 集中营](bug-ji-zhong-ying.md)
+* [杂记](za-ji.md)
+* 第三方组件解读
 

@@ -491,7 +491,7 @@ void crashMethod(id obj, SEL _cmd) {
 ##### 完整消息转发
 
 * * \(void\)forwardInvocation:\(NSInvocation \*\)anInvocation
-* 对象需要创建一个NSInvocation对象，把消息调用的全部细节封装进去，包括selector, target, arguments 等参数，还能够对返回结果进行处理
+* 对象需要创建一个 `NSInvocation` 对象，把消息调用的全部细节封装进去，包括`selector`,` target`, `arguments` 等参数，还能够对返回结果进行处理
 
 * 为了使用完整转发，需要重写以下方法
 
