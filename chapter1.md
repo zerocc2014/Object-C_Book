@@ -14,6 +14,8 @@ gibook 使用：[http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882
 
 [所有博客地址](http://www.jianshu.com/p/c47c24ab1e76)
 
+[Xcode8继续使用插件](http://www.cnblogs.com/jys509/p/6290416.html\)
+
 ```
 clang -rewrite-objc hello.m
 ```
