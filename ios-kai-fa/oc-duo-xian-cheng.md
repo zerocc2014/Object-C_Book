@@ -31,6 +31,8 @@
 
 ## NSThread
 
+NSThread适合轻量级多线程开发，控制线程顺序比较难，同时线程总数无法控制（每次创建并不能重用之前的线程，只能创建一个新的线程），可以使用NSThread的currentThread方法取得当前线程，使用 sleepForTimeInterval:方法让当前线程休眠。
+
 NSThread创建线程一般有三种方式：
 
 ```
@@ -69,6 +71,8 @@ NSThread创建线程一般有三种方式：
 
 ## NSOperation
 
+NSOperation进行多线程开发可以控制线程总数及线程依赖关系。**创建一个NSOperation不应该直接调用start方法（如果直接start则会在主线程中调用）而是应该放到NSOperationQueue中启动。**`NSOperation`是对`GCD`面向对象的ObjC封装，但是相比GCD基于C语言开发，效率却更高，建议如果任务之间有依赖关系或者想要监听任务完成状态的情况下优先选择NSOperation否则使用GCD。
+
 使用NSOperation和NSOperationQueue进行多线程开发类似于C\#中的线程池，只要将一个NSOperation（实际开中需要使用其子类NSInvocationOperation、NSBlockOperation）放到NSOperationQueue这个队列中线程就会依次启动。NSOperationQueue负责管理、执行所有的NSOperation，在这个过程中可以更加容易的管理线程总数和控制线程之间的依赖关系。
 
 NSOperation有两个常用子类用于创建线程操作：NSInvocationOperation和NSBlockOperation，两种方式本质没有区别，但是是后者使用Block形式进行代码组织，使用相对方便。
@@ -87,7 +91,7 @@ NSOperation有两个常用子类用于创建线程操作：NSInvocationOperation
     NSInvocationOperation *invocationOperation=[[NSInvocationOperation alloc]initWithTarget:self selector:@selector(loadImage) object:nil];
     //创建完NSInvocationOperation对象并不会调用，它由一个start方法启动操作，但是注意如果直接调用start方法，则此操作会在主线程中调用，一般不会这么操作,而是添加到NSOperationQueue中
 //    [invocationOperation start];
-    
+
     //创建操作队列
     NSOperationQueue *operationQueue=[[NSOperationQueue alloc]init];
     //注意添加到操作队后，队列会开启一个线程执行此操作
@@ -118,7 +122,7 @@ NSOperation有两个常用子类用于创建线程操作：NSInvocationOperation
 //        //创建操作队列
 //
 //        [operationQueue addOperation:blockOperation];
-        
+
         //方法2：直接使用操队列添加操作
         [operationQueue addOperationWithBlock:^{
             [self loadImage:[NSNumber numberWithInt:i]];
@@ -237,8 +241,6 @@ dispatch_group_notify(group, queue, ^{
 });
 ```
 
-
-
 #### dispatch\_barrier\_async
 
 从字面意思就可以看出来这个变量的用处，即阻碍任务执行，它并不是阻碍某一个任务的执行，而是在代码中，在它之前定义的任务会比它先执行，在它之后定义的任务则会在它执行完之后在开始执行。就像一个栏栅。
@@ -302,8 +304,6 @@ NSLog(@"--------apply done --------");
 * dispatch\_once 保证代码只执行一次，而且线程安全
 * Dispatch I/O 可以以更小的粒度读写文件
 
-
-
 # 线程安全
 
 能被多个线程同时执行的资源
@@ -339,7 +339,6 @@ NSLog(@"--------apply done --------");
 示例代码：
 
 ```
-void swap(A, B)
 {
     lock(lockA);
     lock(lockB);
@@ -355,35 +354,58 @@ swap(X, Y); // 线程 thread 1
 swap(Y, X); // 线程 thread 2
 ```
 
-结果就会导致X被线程1锁住，Y被线程2锁住。而线程1又不能使用Y直到线程2解锁，同理，线程2也不能使用X。这就是死锁，互相等待。
+#### 结果就会导致X被线程1锁住，Y被线程2锁住。而线程1又不能使用Y直到线程2解锁，同理，线程2也不能使用X。这就是死锁，互相等待。
 
+# 线程安全
 
+一块资源可能会被多个线程共享，也就是多个线程可能会访问同一块资源，比如多个线程访问同一个对象、同一个变量、同一个文件和同一个方法等。因此当多个线程访问同一块资源时，很容易会发生数据错误及数据不安全等问题。因此要避免这些问题，我们需要使用“线程锁”来实现。
 
+#### **一、使用关键字**
 
+* [@synchronized（互斥锁）](http://www.cnblogs.com/GarveyCalvin/p/4212611.html#synchronized)
 
+优点：使用@synchronized关键字可以很方便地创建锁对象，而且不用显式的创建锁对象。
 
+缺点：会隐式添加一个异常处理来保护代码，该异常处理会在异常抛出的时候自动释放互斥锁。而这种隐式的异常处理会带来系                      统的额外开销，为优化资源，你可以使用锁对象。
 
+#### **二、“**Object－C”语言
 
+* [NSLock（互斥锁）](http://www.cnblogs.com/GarveyCalvin/p/4212611.html#NSLock)
+* [NSRecursiveLock（递归锁）](http://www.cnblogs.com/GarveyCalvin/p/4212611.html#NSRecursiveLock) 条件锁，递归或循环方法时使用此方法实现锁，可避免死锁等问题。
+* [NSConditionLock（条件锁）](http://www.cnblogs.com/GarveyCalvin/p/4212611.html#NSConditionLock) 使用此方法可以指定，只有满足条件的时候才可以解锁。
+* NSDistributedLock（分布式锁） 在IOS中不需要用到，也没有这个方法，因此本文不作介绍，这里写出来只是想让大家知道有这个锁存在。如果想要学习NSDistributedLock的话，你可以创建MAC OS的项目自己演练，方法请自行Google
 
+#### **三、C 语言**
 
+* [pthread\_mutex\_t（互斥锁）](http://www.cnblogs.com/GarveyCalvin/p/4212611.html#pthread_mutex_t)
+* [GCD－信号量（“互斥锁”）](http://www.cnblogs.com/GarveyCalvin/p/4212611.html#GCD)
+* [pthread\_cond\_t（条件锁）](http://www.cnblogs.com/GarveyCalvin/p/4212611.html#POSIX)
 
+## **线程安全 —— 锁**
 
+**一、使用关键字：**
 
+* **@synchronized**
 
+```
+// 实例类person
+Person *person = [[Person alloc] init];
 
+// 线程A
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    @synchronized(person) {
+        [person personA];
+        [NSThread sleepForTimeInterval:3]; // 线程休眠3秒
+    }
+});
 
-
-
-
-
-
-
-
-
-
-
-
-
+// 线程B
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    @synchronized(person) {
+        [person personB];
+    }
+});
+```
 
 
 
