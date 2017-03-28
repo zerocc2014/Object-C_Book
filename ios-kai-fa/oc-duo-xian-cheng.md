@@ -407,19 +407,201 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 });
 ```
 
+关键字@synchronized的使用，锁定的对象为锁的唯一标识，只有标识相同时，才满足互斥。如果线程B锁对象person改为self或其它标识，那么线程B将不会被阻塞。你是否看到@synchronized\(self\) ，也是对的。它可以锁任何对象，描述为@synchronized\(anObj\)。
 
+**二、Object－C语言对象**
 
+* **使用NSLock实现锁**
 
+```
+// 实例类person
+Person *person = [[Person alloc] init];
+// 创建锁
+NSLock *myLock = [[NSLock alloc] init];
 
+// 线程A
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [myLock lock];
+    [person personA];
+    [NSThread sleepForTimeInterval:5];
+    [myLock unlock];
+});
 
+// 线程B
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [myLock lock];
+    [person personB];
+    [myLock unlock];
+}); 
+```
 
+程序运行结果：线程B会等待线程A解锁后，才会去执行线程B。如果线程B把lock和unlock方法去掉之后，则线程B不会被阻塞，这个和synchronized的一样，需要使用同样的锁对象才会互斥。
 
+NSLock类还提供tryLock方法，意思是尝试锁定，当锁定失败时，不会阻塞进程，而是会返回NO。你也可以使用lockBeforeDate:方法，意思是在指定时间之前尝试锁定，如果在指定时间前都不能锁定，也是会返回NO。
 
+_**注意：锁定\(lock\)和解锁\(unLock\)必须配对使用**_
 
+* **使用 NSRecursiveLock 类实现锁**
 
+```
+// 实例类person
+Person *person = [[Person alloc] init];
+// 创建锁对象
+NSRecursiveLock *theLock = [[NSRecursiveLock alloc] init];
 
+// 创建递归方法
+static void (^testCode)(int);
+testCode = ^(int value) {
+    [theLock tryLock];
+    if (value > 0)
+    {
+        [person personA];
+        [NSThread sleepForTimeInterval:1];
+        testCode(value - 1);
+    }
+    [theLock unlock];
+};
 
+//线程A
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    testCode(5);
+});
 
+//线程B
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [theLock lock];
+    [person personB];
+    [theLock unlock];
+});
+```
+
+如果我们把 NSRecursiveLock 类换成NSLock类，那么程序就会死锁。因为在此例子中，递归方法会造成锁被多次锁定（Lock），所以自己也被阻塞了。而使用NSRecursiveLock类，则可以避免这个问题。
+
+* **使用 NSConditionLock（条件锁）类实现锁：**
+
+使用此方法可以创建一个指定开锁的条件，只有满足条件，才能开锁。
+
+```
+// 实例类person
+Person *person = [[Person alloc] init];
+// 创建条件锁
+NSConditionLock *conditionLock = [[NSConditionLock alloc] init];
+
+// 线程A
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [conditionLock lock];
+    [person personA];
+    [NSThread sleepForTimeInterval:5];
+    [conditionLock unlockWithCondition:10];
+});
+
+// 线程B
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [conditionLock lockWhenCondition:10];
+    [person personB];
+    [conditionLock unlock];
+});
+```
+
+线程A使用的是lock方法，因此会直接进行锁定，并且指定了只有满足10的情况下，才能成功解锁。
+
+unlockWithCondition:方法，创建条件锁，参数传入“整型”。lockWhenCondition:方法，则为解锁，也是传入一个“整型”的参数。
+
+#### **三、C语言**
+
+* **使用 pthread\_mutex\_t 实现锁**
+
+注意：必须在头文件导入：\#import  &lt;pthread.h&gt;
+
+```
+// 实例类person
+Person *person = [[Person alloc] init];
+
+// 创建锁对象
+__block pthread_mutex_t mutex;
+pthread_mutex_init(&mutex, NULL);
+
+// 线程A
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    pthread_mutex_lock(&mutex);
+    [person personA];
+    [NSThread sleepForTimeInterval:5];
+    pthread_mutex_unlock(&mutex);
+});
+
+// 线程B
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    pthread_mutex_lock(&mutex);
+    [person personB];
+    pthread_mutex_unlock(&mutex);
+});
+```
+
+* **使用 GCD 实现 “锁”（信号量）**
+
+GCD提供一种信号的机制，使用它我们可以创建“锁”（信号量和锁是有区别的，见参考链接）。
+
+```
+// 实例类person
+Person *person = [[Person alloc] init];
+
+// 创建并设置信量
+dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+
+// 线程A
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    [person personA];
+    [NSThread sleepForTimeInterval:5];
+    dispatch_semaphore_signal(semaphore);
+});
+
+// 线程B
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    [person personB];
+    dispatch_semaphore_signal(semaphore);
+});
+```
+
+效果也是和上例介绍的相一致。dispatch\_semaphore\_wait方法是把信号量加1，dispatch\_semaphore\_signal是把信号量减1。我们把信号量当作是一个计数器，当计数器是一个非负整数时，所有通过它的线程都应该把这个整数减1。如果计数器大于0，那么则允许访问，并把计数器减1。如果为0，则访问被禁止，所有通过它的线程都处于等待的状态。
+
+* **使用POSIX（条件锁）创建锁**
+
+```
+// 实例类person
+Person *person = [[Person alloc] init];
+
+// 创建互斥锁
+__block pthread_mutex_t mutex;
+pthread_mutex_init(&mutex, NULL);
+// 创建条件锁
+__block pthread_cond_t cond;
+pthread_cond_init(&cond, NULL);
+
+// 线程A
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&cond, &mutex);
+    [person personA];
+    pthread_mutex_unlock(&mutex);
+});
+
+// 线程B
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    pthread_mutex_lock(&mutex);
+    [person personB];
+    [NSThread sleepForTimeInterval:5];
+    pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&mutex);
+});
+```
+
+效果：程序会首先调用线程B，在5秒后再调用线程A。因为在线程A中创建了等待条件锁，线程B有激活锁，只有当线程B执行完后会激活线程A。
+
+pthread\_cond\_wait方法为等待条件锁。
+
+pthread\_cond\_signal方法为激动一个相同条件的条件锁。
 
 
 
