@@ -432,7 +432,7 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     [myLock lock];
     [person personB];
     [myLock unlock];
-}); 
+});
 ```
 
 程序运行结果：线程B会等待线程A解锁后，才会去执行线程B。如果线程B把lock和unlock方法去掉之后，则线程B不会被阻塞，这个和synchronized的一样，需要使用同样的锁对象才会互斥。
@@ -602,6 +602,10 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 pthread\_cond\_wait方法为等待条件锁。
 
 pthread\_cond\_signal方法为激动一个相同条件的条件锁。
+
+## 参考文章：
+
+* [信号量与互斥锁](http://www.cnblogs.com/diyingyun/archive/2011/12/04/2275229.html\)
 
 
 
