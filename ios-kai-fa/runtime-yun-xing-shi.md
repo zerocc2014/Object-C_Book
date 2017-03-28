@@ -328,9 +328,9 @@ objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态�
 
 调用方法的方式有两种：
 
-1. \[object message\] 的方式调用方法，如果一个对象无法按上述正常流程接受某一消息时，就会启动所谓“消息转发\(message forwarding\)”机制，通过这一机制，我们可以告诉对象如何处理未知的消息。默认情况下，对象接收到未知的消息，会导致程序崩溃，通过控制台，我们可以看到以下异常信息：这段异常信息实际上是由NSObject的“doesNotRecognizeSelector”方法抛出的。不过，我们可以采取一些措施，让我们的程序执行特定的逻辑，而避免程序的崩溃。
+1. **\[object message\]** 的方式调用方法，如果一个对象无法按上述正常流程接受某一消息时，就会启动所谓“消息转发\(message forwarding\)”机制，通过这一机制，我们可以告诉对象如何处理未知的消息。默认情况下，对象接收到未知的消息，会导致程序崩溃，通过控制台，我们可以看到以下异常信息：这段异常信息实际上是由NSObject的“doesNotRecognizeSelector”方法抛出的。不过，我们可以采取一些措施，让我们的程序执行特定的逻辑，而避免程序的崩溃。
 
-2. 以perform…的形式来调用，则需要等到运行时才能确定object是否能接收message消息。如果不能，则程序崩溃。通常，当我们不能确定一个对象是否能接收某个消息时，会先调用respondsToSelector:来判断一下。如下代码所示：
+2. 以 perform… 的形式来调用，则需要等到运行时才能确定object是否能接收message消息。如果不能，则程序崩溃。通常，当我们不能确定一个对象是否能接收某个消息时，会先调用respondsToSelector:来判断一下。如下代码所示：
 
 ```
     if([self respondsToSelector:@selector(method)]){
@@ -491,7 +491,7 @@ void crashMethod(id obj, SEL _cmd) {
 ##### 完整消息转发
 
 * * \(void\)forwardInvocation:\(NSInvocation \*\)anInvocation
-* 对象需要创建一个 `NSInvocation` 对象，把消息调用的全部细节封装进去，包括`selector`,` target`, `arguments` 等参数，还能够对返回结果进行处理
+* 对象需要创建一个 `NSInvocation` 对象，把消息调用的全部细节封装进去，包括`selector`,`target`, `arguments` 等参数，还能够对返回结果进行处理
 
 * 为了使用完整转发，需要重写以下方法
 
