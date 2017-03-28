@@ -18,6 +18,7 @@
   * [Runtime 运行时](ios-kai-fa/runtime-yun-xing-shi.md)
   * [UI 响应者链](ios-kai-fa/uixiang-ying-zhe-lian.md)
   * [OC 内存管理](ios-kai-fa/oc-nei-cun-guan-li.md)
+    * [内存管理基础](ios-kai-fa/nei-cun-guan-li-ji-chu.md)
     * [内存问题](ios-kai-fa/nei-cun-wen-ti.md)
   * [OC 多线程](ios-kai-fa/oc-duo-xian-cheng.md)
   * OC 音视频
