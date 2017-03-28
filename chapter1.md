@@ -20,6 +20,10 @@ gibook 使用：[http://blog.csdn.net/xiaocainiaoshangxiao/article/details/46882
 clang -rewrite-objc hello.m
 ```
 
+```
+clang -x objective-c -rewrite-objc -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.1.sdk XXXXXXX
+```
+
 video 插件
 
 ```

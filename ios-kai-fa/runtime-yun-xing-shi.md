@@ -604,7 +604,6 @@ void crashMethod(id obj, SEL _cmd) {
 + (void)load
 {
     // 交换方法
-
     // 获取imageWithName方法地址
     Method imageWithName = class_getClassMethod(self, @selector(imageWithName:));
 
