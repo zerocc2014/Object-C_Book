@@ -12,13 +12,13 @@ runtime简称运行时。也就是系统运行的时候的一些机制，主要�
 
 Objective-C类是由Class类型来表示的，它实际上是一个指向objc\_class结构体的指针，它的定义如下：
 
-```
+``` objectivec
 typedef struct objc_class *Class;   // An opaque type that represents an Objective-C class. 不透明类型代表类
 ```
 
 查看 &lt;objc/runtime.h&gt; 中 objc\_class 结构体的定义如下：
 
-```
+``` objectivec
 struct objc_class {
     Class isa  OBJC_ISA_AVAILABILITY;     //指向对象类型 是指向元类的指针
 
@@ -47,7 +47,7 @@ struct objc_class {
 
 NSObject 基类定义 :
 
-```
+``` objectivec
 typedef struct objc_class *Class;
 
 @interface NSObject <NSObject> {
@@ -57,7 +57,7 @@ typedef struct objc_class *Class;
 
 objc\_class 2.0 之后的定义：
 
-```
+``` objectivec
 typedef struct objc_class *Class;  
 typedef struct objc_object *id;
 
@@ -88,11 +88,11 @@ union isa_t
     Class cls;
     uintptr_t bits;
 }
-```
+``` 
 
 代表一个类的实例，对象的定义如下：
 
-```
+``` objectivec
 // Represents an instance of a class.
 struct objc_object {
     Class isa  OBJC_ISA_AVAILABILITY;
@@ -101,7 +101,7 @@ struct objc_object {
 
 一个类实例的指针，通用对象类型： id
 
-```
+``` objectivec
 // A pointer to an instance of a class.
 typedef struct objc_object *id;
 ```
@@ -146,7 +146,7 @@ OC只是在编译阶段确定了要向接收者发送message这条消息，而re
 
 也就是说 objc\_msgSend 函数相当于入口；对象调用某个方法都将被编译器转化为：
 
-```
+``` objectivec
 id objc_msgSend(id self, SEL op, ... );  // objc_msgSend(obj, selector, arg1, arg2, ...)
 ```
 
@@ -158,7 +158,7 @@ id objc_msgSend(id self, SEL op, ... );  // objc_msgSend(obj, selector, arg1, ar
 
 objc\_msgSend函数第二个参数类型为SEL，它是selector在Objc中的表示类型（Swift中是Selector类）。selector是方法选择器，可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
 
-```
+``` objectivec
 typedef struct objc_selector *SEL;
 ```
 
@@ -170,13 +170,13 @@ typedef struct objc_selector *SEL;
 
 objc\_msgSend第一个参数类型为id，objc.h中可以查看,它是一个指向类实例的指针：
 
-```
+``` objectivec
 typedef struct objc_object *id;    // 结构体指针
 ```
 
 objc\_object又是：
 
-```
+``` objectivec
 struct objc_object {
     Class isa  OBJC_ISA_AVAILABILITY;
 };
@@ -188,15 +188,14 @@ objc\_object结构体包含一个isa指针，指向它的类别Class，根据isa
 
 之所以说 isa 是指针是因为Class其实是一个指向 objc\_class 结构体的指针：
 
-```
+``` objectivec
 typedef struct objc_class *Class;
 ```
 
-```
-而objc_class，查看 <objc/runtime.h> 中 objc_class 结构体的定义如下：
-```
 
-```
+而objc_class，查看 <objc/runtime.h> 中 objc_class 结构体的定义如下：
+__
+``` objectivec
 struct objc_class {
     Class isa  OBJC_ISA_AVAILABILITY;
 
@@ -221,7 +220,7 @@ struct objc_class {
 
 其中objc\_ivar\_list和objc\_method\_list分别是成员变量列表和方法列表：
 
-```
+``` objectivec
 struct objc_ivar_list {
             int ivar_count                                           OBJC2_UNAVAILABLE;
         #ifdef __LP64__
@@ -245,13 +244,13 @@ struct objc_ivar_list {
 
 Method是一种代表类中的某个方法的类型。
 
-```
+``` objectivec
 typedef struct objc_method *Method;
 ```
 
 而objc\_method在上面的方法列表中提到过，它存储了方法名，方法类型和方法实现：
 
-```
+``` objectivec
 struct objc_method {
         SEL method_name                                          OBJC2_UNAVAILABLE;
         char *method_types                                       OBJC2_UNAVAILABLE;
@@ -267,7 +266,7 @@ struct objc_method {
 
 函数指针 - IMP 在objc.h中的定义是：
 
-```
+``` objectivec
 typedef id (*IMP)(id, SEL, ...);
 ```
 
