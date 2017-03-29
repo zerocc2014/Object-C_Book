@@ -280,7 +280,7 @@ typedef id (*IMP)(id, SEL, ...);
 
 获取方法地址IMP避开消息绑定而直接获取方法的地址并调用方法。这种做法很少用，除非是需要持续大量重复调用某方法的极端情况，避开消息发送泛滥而直接调用该方法会更高效。NSObject类中有个methodForSelector:实例方法，你可以用它来获取某个方法选择器对应的IMP，举个栗子：
 
-```
+``` objectivec
 void (*setter)(id, SEL, BOOL);
         int i;
         setter = (void (*)(id, SEL, BOOL))[target
@@ -293,13 +293,13 @@ void (*setter)(id, SEL, BOOL);
 
 Cache在 runtime.h 中的定义：
 
-```
+``` objectivec
 typedef struct objc_cache *Cache                             OBJC2_UNAVAILABLE;
 ```
 
 在类 objc\_class 结构体中有一个struct objc\_cache \*cache，它到底是缓存啥的呢，先看看objc\_cache 的实现：
 
-```
+``` objectivec
 struct objc_cache {
         unsigned int mask /* total = mask + 1 */                 OBJC2_UNAVAILABLE;
         unsigned int occupied                                    OBJC2_UNAVAILABLE;
@@ -313,7 +313,7 @@ Cache为方法调用的性能进行优化,通俗地讲,每当实例对象接收�
 
 下载objc源代码，在 objc-runtime-new.h 中，我们发现 objc\_class有如下定义:
 
-```
+``` objectivec
 struct objc_class : objc_object {
     // Class ISA;
     Class superclass;   
@@ -343,7 +343,7 @@ Objective-C 和 C++ 不同，它是一个重度 面向对象的语言，面向�
 
 示例代码：
 
-```
+``` objectivec
 @interface Sark : NSObject
 @end
 @implementation Sark
@@ -362,7 +362,7 @@ int main(int argc, const char * argv[]) {
 
 运行结果：
 
-```
+``` objectivec
 2014-11-05 14:45:08.474 Test[9412:721945] 1 0 0 0
 ```
 
@@ -388,7 +388,7 @@ objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态�
 
 2. 以 perform… 的形式来调用，则需要等到运行时才能确定object是否能接收message消息。如果不能，则程序崩溃。通常，当我们不能确定一个对象是否能接收某个消息时，会先调用respondsToSelector:来判断一下。如下代码所示：
 
-```
+``` objectivec
     if([self respondsToSelector:@selector(method)]){
         [self performSelector:@selector(method)];
     }
@@ -409,7 +409,7 @@ objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态�
 
 对象在接收到未知的消息时，首先会调用所属类的类方法 +resolveInstanceMethod:\(实例方法\)或者 +resolveClassMethod:\(类方法\)。在这个方法中，我们有机会为该未知消息新增一个“处理方法”，通过运行时class\_addMethod函数动态添加到类里面就可以了。
 
-```
+``` objectivec
 @interface SomeClass : NSObject
 - (void)foo;
 - (void)crash;
@@ -425,7 +425,7 @@ objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态�
 
 分别调用这两个方法：
 
-```
+``` objectivec
 SomeClass *someClass = [[SomeClass alloc] init];
 [someClass foo];
 [someClass crash];
@@ -433,7 +433,7 @@ SomeClass *someClass = [[SomeClass alloc] init];
 
 foo 方法正常打印，crash 方法崩溃；运用动态方法解析，Objective-C运行时会调用+ resolveInstanceMethod：或者+ resolveClassMethod :,让你有机会提供一个函数实现。如果你添加了函数并返回YES，那运行时系统就会重新启动一次消息发送的过程。还是以crash为例，你可以这么实现：
 
-```
+``` objectivec
 @implementation SomeClass
 - (void)foo{
     NSLog(@"method foo was called on %@",[self class]);
@@ -469,7 +469,7 @@ void crashMethod(id obj, SEL _cmd) {
 
 这一步合适于我们只想将消息转发到另一个能处理该消息的对象上。但这一步无法对消息进行处理，如操作消息的参数和返回值。
 
-```
+``` objectivec
 @interface SomeClass : NSObject
 - (void)foo;
 - (void)crash;
@@ -517,7 +517,7 @@ void crashMethod(id obj, SEL _cmd) {
 @end
 ```
 
-```
+``` objectivec
 #import "OtherClass.h"
 
 @implementation OtherClass
@@ -556,7 +556,7 @@ void crashMethod(id obj, SEL _cmd) {
 
 如果在上一步备用接收者还不能处理未知消息，则唯一能做的就是启用完整的消息转发机制了。此时会调用方法：
 
-```
+``` objectivec
 - (void)forwardInvocation:(NSInvocation *)anInvocation，
 ```
 
@@ -568,7 +568,7 @@ void crashMethod(id obj, SEL _cmd) {
 
 向OtherClass.m中添加如下方法：
 
-```
+``` objectivec
 /**
  *  逆置字符串
  *
@@ -591,7 +591,7 @@ void crashMethod(id obj, SEL _cmd) {
 
 向SomeClass.m中添加如下方法：
 
-```
+``` objectivec
 #pragma mark - 完整消息转发
 //必须重写这个方法，为给定的selector提供一个合适的方法签名。
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
@@ -641,7 +641,7 @@ void crashMethod(id obj, SEL _cmd) {
 * 方式一:继承系统的类，重写方法
 * 方式二:使用runtime,交换方法.
 
-```
+``` objectivec
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -691,7 +691,7 @@ void crashMethod(id obj, SEL _cmd) {
 * 经典面试题：有没有使用performSelector，其实主要想问你有没有动态添加过方法。
 * 简单使用
 
-```
+``` objectivec
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -737,7 +737,7 @@ void eat(id self,SEL sel)
 
 原理：给一个类声明属性，其实本质就是给这个类添加关联，并不是直接把这个值的内存空间添加到类存空间。
 
-```
+``` objectivec
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -779,7 +779,7 @@ static const char *key = "name";
 
 如果需要实现一些基本数据的数据持久化\(data persistance\)或者数据共享\(data share\)。我们可以选择归档和解档。如果用一般的方法:
 
-```
+``` objectivec
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.name forKey:@"nameKey"];
     [aCoder encodeObject:self.gender forKey:@"genderKey"];
@@ -792,7 +792,7 @@ static const char *key = "name";
 * 让实体类遵循`<NSCoding>`协议。并在.m文件导入头文件`<objc/runtime.h>`。
 * 实现`- (instancetype)initWithCoder:(NSCoder *)aDecoder`和`- (void)encodeWithCoder:(NSCoder *)aCoder`方法。
 
-```
+``` objectivec
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
@@ -827,7 +827,7 @@ static const char *key = "name";
 
 或者这种写法：
 
-```
+``` objectivec
 - (id)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super init]) {
         unsigned int outCount;
@@ -854,7 +854,7 @@ static const char *key = "name";
 
 在main.m 函数中测试归档解档：
 
-```
+``` objectivec
 #import <Foundation/Foundation.h>
 #import "Model.h"
 
@@ -889,7 +889,7 @@ int main(int argc, const char * argv[]) {
 * 推送：根据服务端推送过来的数据规则，跳转到对应的控制器
 * 列表：不同类似的名字，可能跳转不同的控制器，任意跳转
 
-```
+``` objectivec
 - (void)testRuntime
 {
     NSDictionary *userInfo = @{@"class":@"CCRuntimePushVC",
