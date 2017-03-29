@@ -904,3 +904,9 @@ int main(int argc, const char * argv[]) {
 
 参考：[https://halfrost.com/objc\_runtime\_isa\_class/](https://halfrost.com/objc_runtime_isa_class/)
 
+## 参考文章：
+
+* [精神病院Objective-C Runtime](https://halfrost.com/tag/runtime/\)
+
+
+
