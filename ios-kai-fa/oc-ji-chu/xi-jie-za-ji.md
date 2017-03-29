@@ -68,7 +68,7 @@ Objective-C 中使用`@property`来实现成员变量，在绑定属性时，如
 
 成员变量 的存取 （读写）
 
-```
+``` objectivec
 // Car.h
 @interface Car : NSObject {
     // 实例变量
@@ -123,7 +123,7 @@ Objective-C 中使用`@property`来实现成员变量，在绑定属性时，如
 
 7. **assign**：默认关键字。非对象类型一般使用此关键字。assign用于值类型，如int、float、double和NSInteger，CGFloat等表示单纯的复制。还包括不存在所有权关系的对象，比如常见的delegate。在setter方法中，采用直接赋值来实现设值操作：
 
-```
+``` objectivec
 -(void)setRunning:(int)newRunning{  
     _running = newRunning;  
 }
