@@ -323,6 +323,10 @@ struct objc_class : objc_object {
 }
 ```
 
+我们看到在Objective-C的设计哲学中，一切都是对象。Class在设计中本身也是一个对象。而这个Class对象的对应的类，我们叫它 Meta Class。即Class结构体中的 isa 指向的就是它的 Meta Class。
+
+Objective-C 和 C++ 不同，它是一个重度 面向对象的语言，面向对象思想贯穿于整个操作系统。操作系统提供了很多框架（framework）和工具包（kit），开发者可以使用丰富的对象进行快速开发GUI开发，这些对象都是基于NSObject。
+
 ## OC 消息发送流程
 
 objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态绑定的所有事情：
