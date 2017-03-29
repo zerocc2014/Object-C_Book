@@ -310,6 +310,19 @@ struct objc_cache {
 
 Cache为方法调用的性能进行优化,通俗地讲,每当实例对象接收到一个消息时,它不会直接在isa指向的类的方法列表中遍历查找能够响应消息的方法，因为这样效率太低了，而是优先在Cache中查找。Runtime系统会把被调用的方法存到Cache中（理论上讲一个方法如果被调用，那么它有可能今后还会被调用）method\_name作为key，method\_imp作为value给存起来，下次查找的时候效率更高。这根计算机组成原理中学过的CPU绕过主存先访问Cache的道理挺像，猜测苹果为提高Cache命中率应该也做了努力吧。高速缓存\(cache\) -&gt;内存-&gt;虚拟内存-&gt;磁盘
 
+### MetaClass
+
+下载objc源代码，在 objc-runtime-new.h 中，我们发现 objc\_class有如下定义:
+
+```
+struct objc_class : objc_object {
+    // Class ISA;
+    Class superclass;   
+    ...
+    ...
+}
+```
+
 ## OC 消息发送流程
 
 objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态绑定的所有事情：
