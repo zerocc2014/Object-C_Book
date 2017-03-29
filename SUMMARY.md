@@ -3,7 +3,7 @@
 * [Introduction](README.md)
 * [First Chapter](chapter1.md)
 * [基础知识](ji-chu-zhi-shi.md)
-  * 计算机网络
+  * [计算机网络](ji-chu-zhi-shi/ji-suan-ji-wang-luo.md)
   * 数据结构与算法
   * [设计模式](ji-chu-zhi-shi/she-ji-mo-shi.md)
 * [iOS 开发](ios-kai-fa.md)
