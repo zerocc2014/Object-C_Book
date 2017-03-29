@@ -1,6 +1,6 @@
 
 {
-  "plugins": ["video","ga","codeblock-filename","emphasize","baidu","link-fixer","anchors","redirect","jsfiddle","ace"],
+  "plugins": [ "-highlight","video","ga","codeblock-filename","emphasize","baidu","link-fixer","anchors","redirect","jsfiddle","ace"],
   "pluginsConfig": {  
     "ga": {
       "token": "UA-XXXX-Y",
