@@ -327,6 +327,46 @@ struct objc_class : objc_object {
 
 Objective-C 和 C++ 不同，它是一个重度 面向对象的语言，面向对象思想贯穿于整个操作系统。操作系统提供了很多框架（framework）和工具包（kit），开发者可以使用丰富的对象进行快速开发GUI开发，这些对象都是基于NSObject。
 
+我们可以把Meta Class理解为 一个Class对象的Class。简单的说：
+
+* 当我们对一个实例\(对象\)发送消息时（-开头的方法），会在该 instance 对应的类的 methodLists 里查找
+* 当我们对一个类发送消息时（+开头的方法），会在该类的 MetaClass 的 methodLists 里查找
+
+而 Meta Class本身也是一个Class，它跟其他Class一样也有自己的 isa 和 super\_class 指针。看下图：
+
+![](/assets/metaClass.png)
+
+* 每个Class都有一个isa指针指向一个唯一的Meta Class
+* 每一个Meta Class的isa指针都指向最上层的Meta Class（图中的NSObject的Meta Class）
+* 最上层的Meta Class的isa指针指向自己，形成一个回路
+* 每一个Meta Class的super class指针指向它原本Class的 Super Class的Meta Class。但是最上层的Meta Class的 Super Class指向NSObject Class本身
+* 最上层的NSObject Class的super class指向 ni
+
+示例代码：
+
+```
+@interface Sark : NSObject
+@end
+@implementation Sark
+@end
+int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+        BOOL res1 = [(id)[NSObject class] isKindOfClass:[NSObject class]];
+        BOOL res2 = [(id)[NSObject class] isMemberOfClass:[NSObject class]];
+        BOOL res3 = [(id)[Sark class] isKindOfClass:[Sark class]];
+        BOOL res4 = [(id)[Sark class] isMemberOfClass:[Sark class]];
+        NSLog(@"%d %d %d %d", res1, res2, res3, res4);
+    }
+    return 0;
+}
+```
+
+运行结果：
+
+```
+2014-11-05 14:45:08.474 Test[9412:721945] 1 0 0 0
+```
+
 ## OC 消息发送流程
 
 objc\_msgSend\(receiver, selector, arg1, arg2,...\) 这个函数完成了动态绑定的所有事情：
