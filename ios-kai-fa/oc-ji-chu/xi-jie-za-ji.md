@@ -45,7 +45,7 @@ OC 没有像 Java，C++ 中的那种绝对的私有及保护成员方法，仅�
 
 其分类private：
 
-```
+``` objectivec
 #import "myClass.h"
 
 // myClass的分类 private
