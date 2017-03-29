@@ -4,7 +4,7 @@
 
 OC中类的方法只有实例方法和静态方法\(类方法\)两种：
 
-```
+``` objectivec
 @interface Controller : NSObject
 
 + (void)thisIsAStaticMethod; // 静态方法
@@ -17,7 +17,7 @@ OC 没有像 Java，C++ 中的那种绝对的私有及保护成员方法，仅�
 
 可以使用 Category 来实现私有方法，给myClass类添加一个分类\(Category\)，在分类.h中写上该私有方法声明，分类.m中不用写实现。这就是`私有方法的前向引用`：
 
-```
+``` objectivec
 // myClass.h文件
 @interface myClass : NSObject
 - (void)PublicMethod; //公开方法，可在其他类或子类进行访问
