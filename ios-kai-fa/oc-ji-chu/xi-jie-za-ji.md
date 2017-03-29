@@ -131,7 +131,7 @@ Objective-C 中使用`@property`来实现成员变量，在绑定属性时，如
 
 * **retain**：对象的引用计数+ 1.ARC下已经不再使用此关键字，用强代替。 简单来说，就是对传入的对象拥有所有权，只要对该对象拥有所有权，该对象就不会被释放。如下代码所示：
 
-```
+``` objectivec
 -(void)setName:(NSString*)_name{  
      //首先判断是否与旧对象一致，如果不一致进行赋值。  
      //因为如果是一个对象的话，进行if内的代码会造成一个极端的情况：当此name的retain为1时，使此次的set操作让实例name提前释放，而达不到赋值目的。  
@@ -145,7 +145,7 @@ Objective-C 中使用`@property`来实现成员变量，在绑定属性时，如
 * **strong**：能够维持对象的生命。strong是在IOS引入ARC的时候引入的关键字，是retain的一个可选的替代。表示实例变量对传入的对象要有所有权关系，即强引用。strong跟retain的意思相同并产生相同的代码，但是语意上更好更能体现对象的关系。
 * **copy**：拷贝一个新的对象，新对象的引用计数+1，原对象不变。与strong类似，但区别在于实例变量是对传入对象的副本拥有所有权，而非对象本身。
 
-```
+``` objectivec
 -(void)setThetest:(test *)newThetest {  
     if (thetest!= newThetest) {  
 　　      thetest= [newThetest copy];  
@@ -184,7 +184,7 @@ copy:对于不可变对象copy采用的是浅复制，引用计数器加1（其�
 
 有些时候我们需要在类中添加某个在类中全局可用的变量，为了避免污染作用域，一个比较好的做法是在 .m 文件中使用 static 变量：
 
-```
+``` objectivec
 static NSOperationQueue * _personOperationQueue = nil;
 
 @implementation XYZPerson
@@ -210,7 +210,7 @@ static NSOperationQueue * _personOperationQueue = nil;
 
 有一种方法是声明 static 函数，下面的代码来自 [AFNetworking](https://github.com/AFNetworking/AFNetworking/blob/master/AFNetworking/AFURLSessionManager.m\) ，声明了一个当前文件范围可用的队列：
 
-```
+``` objectivec
 static dispatch_queue_t url_session_manager_creation_queue() {
     static dispatch_queue_t af_url_session_manager_creation_queue;
     static dispatch_once_t onceToken;
@@ -223,7 +223,7 @@ static dispatch_queue_t url_session_manager_creation_queue() {
 
 下面介绍一个有点黑魔法的方法，除了上面两种方法之外，我们还可以通过编译器的`__attribute__`特性来实现初始化：
 
-```
+``` objectivec
 __attribute__((constructor))
 static void initialize_Queue() {
     _personOperationQueue = [[NSOperationQueue alloc] init];
