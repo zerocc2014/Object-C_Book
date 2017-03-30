@@ -170,7 +170,7 @@ dispatch_queue_t dispatch_queue_create(const char *label, dispatch_queue_attr_t 
     dispatch_queue_t queue = dispatch_queue_create("com.sanyucz.queue", DISPATCH_QUEUE_CONCURRENT);
 
 // 2. 获取系统标准提供的 Dispatch Queue
- // 2.1 获取主队列
+ // 2.1 获取主队列 串行
     dispatch_queue_t queue = dispatch_get_main_queue();
  // 2.2 获取全局并发队列
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
